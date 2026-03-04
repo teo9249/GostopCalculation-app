@@ -2,43 +2,63 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고스톱 정산기 Smart Master Pro Final</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3c72">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <title>고스톱 정산 Master</title>
     <style>
         :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--primary), var(--secondary)); margin:0; padding:10px; color:white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 500px; }
-        .header { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0; }
-        h2 { margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .help-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--primary), var(--secondary)); margin:0; padding:10px; color:white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+        
+        .container { width: 100%; max-width: 500px; padding-bottom: 30px; }
+        .header { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; }
+        h2 { margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); font-size: 1.4rem; }
+        .help-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 20px; padding: 5px 15px; font-size: 12px; cursor: pointer; }
+
         .card { background:white; color:#333; padding:15px; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
         .name-section { display: flex; justify-content: space-between; gap: 5px; }
-        .nameInput { width: 22%; padding:8px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; font-size: 14px; outline: none; }
+        .nameInput { width: 22%; padding:10px 5px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; font-size: 14px; outline: none; }
         .nameInput:focus { border-color: var(--secondary); background: #f0f7ff; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; color: #333; padding: 20px; border-radius: 15px; max-width: 450px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; }
-        .player-row { border-bottom: 1px solid #eee; padding: 12px 0; }
+
+        /* 모달 스타일 */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; color: #333; padding: 25px; border-radius: 20px; max-width: 450px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal-content h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .modal-content p { font-size: 14px; line-height: 1.6; margin: 10px 0; }
+
+        /* 플레이어 행 스타일 */
+        .player-row { border-bottom: 1px solid #eee; padding: 15px 0; }
         .row-main { display: flex; align-items: center; gap: 10px; }
-        .role-radio { transform: scale(1.3); cursor: pointer; }
-        .player-name-label { width: 75px; font-weight: bold; font-size: 15px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .score-input { width: 100%; max-width: 100px; padding: 10px; border-radius: 8px; border: 2px solid var(--accent); text-align: center; font-size: 18px; font-weight: bold; outline: none; }
+        .role-radio { transform: scale(1.4); cursor: pointer; }
+        .player-name-label { width: 80px; font-weight: bold; font-size: 15px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .score-input { width: 100%; max-width: 110px; padding: 12px; border-radius: 10px; border: 2.5px solid var(--accent); text-align: center; font-size: 20px; font-weight: bold; outline: none; }
         .score-input:disabled { border-color: #eee; background: #f9f9f9; opacity: 0; pointer-events: none; }
         .win-tag { font-weight: bold; color: var(--accent); font-size: 14px; display: none; }
-        .row-options { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 30px; margin-top: 8px; }
-        .opt-btn { font-size: 11px; padding: 6px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; }
+
+        .row-options { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 30px; margin-top: 10px; }
+        .opt-btn { font-size: 11px; padding: 8px 10px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; }
         .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; }
-        .opt-btn.multi-btn.active { background: #6610f2; color: white; }
-        .opt-btn.exclude-btn.active { background: #6c757d; color: white; }
-        .mainBtn { width:100%; padding:15px; margin-top:10px; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor: pointer; }
+        .opt-btn.multi-btn.active { background: #6610f2; color: white; border-color: #6610f2; }
+        .opt-btn.exclude-btn.active { background: #6c757d; color: white; border-color: #6c757d; }
+
+        .mainBtn { width:100%; padding:18px; margin-top:10px; border:none; border-radius:15px; font-size:17px; font-weight:bold; cursor: pointer; transition: 0.1s; }
+        .mainBtn:active { transform: scale(0.98); }
         .addBtn { background: var(--accent); color:white; }
         .undoBtn { background: var(--warning); color: #333; margin-top: 10px; }
-        .resetBtn { background: var(--danger); color:white; margin-top: 25px; font-size: 14px; opacity: 0.9; }
-        #result { white-space:pre-line; font-weight:bold; color: var(--secondary); line-height: 1.6; border-top: 1px solid #eee; padding-top: 12px; font-size: 16px; }
-        #ranking { line-height: 1.8; margin-bottom: 12px; font-size: 15px; }
-        .rank-winner { background:#ffe066; padding:2px 8px; border-radius:6px; font-weight:bold; color: #000; }
-        .copy-btn { float: right; padding: 4px 8px; font-size: 11px; background: #6c757d; color: white; border-radius: 4px; border: none; cursor: pointer; }
+        .resetBtn { background: var(--danger); color:white; margin-top: 30px; font-size: 14px; opacity: 0.8; }
+
+        #result { white-space:pre-line; font-weight:bold; color: var(--secondary); line-height: 1.7; border-top: 1px solid #eee; padding-top: 15px; font-size: 16px; }
+        #ranking { line-height: 1.9; margin-bottom: 15px; font-size: 15px; }
+        .rank-winner { background:#ffe066; padding:3px 10px; border-radius:8px; font-weight:bold; color: #000; }
+        .copy-btn { float: right; padding: 6px 12px; font-size: 12px; background: #6c757d; color: white; border-radius: 6px; border: none; cursor: pointer; }
+        
         .history-list { font-size: 13px; color: #555; max-height: 250px; overflow-y: auto; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
-        .history-item { margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px dashed #ddd; }
+        .history-item { margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #ddd; }
         .history-winner { color: var(--accent); font-weight: bold; }
     </style>
 </head>
@@ -52,7 +72,7 @@
 
     <div id="helpModal" class="modal">
         <div class="modal-content">
-            <h3 style="margin-top:0">📖 사용 설명서</h3>
+            <h3>📖 사용 설명서</h3>
             <p>1. <b>이름 설정</b>: 상단 칸에 이름을 넣으세요. (클릭 시 자동선택)</p>
             <p>2. <b>승자/점수</b>: 승자를 체크하고 점수를 넣으세요.</p>
             <p>3. <b>패자 옵션</b>: 박, 고/흔듦, 추가x2 등을 체크하세요.</p>
@@ -91,6 +111,13 @@
 </div>
 
 <script>
+    // [PWA 서비스 워커 등록]
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail:', err));
+        });
+    }
+
     let rounds = []; 
     let winnerIdx = 0;
     let excludes = [false, false, false, false];
