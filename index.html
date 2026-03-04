@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고스톱 정산기 Smart Master Pro v3</title>
+    <title>고스톱 정산기 Smart Master Pro v4</title>
     <style>
-        :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; }
+        :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; --gobak: #8b0000; }
         body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--primary), var(--secondary)); margin:0; padding:10px; color:white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 500px; }
         .card { background:white; color:#333; padding:15px; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
@@ -25,6 +25,7 @@
         .row-options { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 30px; margin-top: 8px; }
         .opt-btn { font-size: 11px; padding: 6px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; transition: 0.1s; }
         .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; box-shadow: 0 2px 5px rgba(255,77,77,0.4); }
+        .opt-btn.gobak-btn.active { background: var(--gobak); border-color: var(--gobak); }
         .opt-btn.multi-btn { background: #f0f0f0; border-color: #bbb; color: #333; }
         .opt-btn.multi-btn.active { background: #6610f2; color: white; border-color: #6610f2; }
         .opt-btn.exclude-btn { border-color: #6c757d; color: #6c757d; }
@@ -45,7 +46,7 @@
 <body>
 
 <div class="container">
-    <h2>🎴 스마트 고스톱 정산 Master Pro v3</h2>
+    <h2>🎴 스마트 고스톱 정산 Master v4</h2>
     <div class="card">
         <div style="margin-bottom: 8px; font-weight: bold; font-size: 14px;">👤 이름 설정 (클릭 시 자동 선택)</div>
         <div class="name-section">
@@ -95,6 +96,7 @@
                     </div>
                     <div class="row-options" id="options${i}">
                         <button class="opt-btn exclude-btn" id="ex${i}" onclick="toggleEx(${i})">휴식</button>
+                        <button class="opt-btn pak-btn gobak-btn" id="gb${i}" onclick="toggleGobak(${i})">고박(독박)</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">피박</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">광박</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">멍박</button>
@@ -135,6 +137,16 @@
         });
     }
 
+    function toggleGobak(idx) {
+        // 고박은 한 판에 한 명만 가능하므로 다른 플레이어의 고박을 해제
+        const allGobakBtns = document.querySelectorAll('.gobak-btn');
+        const currentBtn = document.getElementById(`gb${idx}`);
+        const isActive = currentBtn.classList.contains('active');
+        
+        allGobakBtns.forEach(btn => btn.classList.remove('active'));
+        if (!isActive) currentBtn.classList.add('active');
+    }
+
     function resetOptionsUI() {
         excludes = [false, false, false, false];
         document.querySelectorAll('.opt-btn').forEach(btn => {
@@ -151,26 +163,55 @@
         let currentScores = [0, 0, 0, 0];
         let winSum = 0;
         let details = [];
+        let gobakIdx = -1;
+
+        // 고박 쓴 사람 찾기
+        for (let i = 0; i < 4; i++) {
+            if (document.getElementById(`gb${i}`) && document.getElementById(`gb${i}`).classList.contains('active')) {
+                gobakIdx = i;
+                break;
+            }
+        }
 
         for (let i = 0; i < 4; i++) {
             const name = document.getElementById(`name${i}`).value || `P${i+1}`;
             if (i === winnerIdx) continue;
+            
             if (excludes[i]) {
                 currentScores[i] = 0;
-                details.push(`${name}(휴식)`); // 히스토리 표시 변경
+                details.push(`${name}(휴식)`);
             } else {
                 let m = 1;
                 let pakNames = [];
                 document.querySelectorAll(`#options${i} .pak-btn.active`).forEach((btn) => { 
-                    m *= 2; 
-                    pakNames.push(btn.innerText);
+                    if (btn.innerText !== '고박(독박)') {
+                        m *= 2; 
+                        pakNames.push(btn.innerText);
+                    }
                 });
-                currentScores[i] = -(scoreVal * m);
-                winSum += Math.abs(currentScores[i]);
+                let personalLoss = -(scoreVal * m);
+                currentScores[i] = personalLoss;
+                winSum += Math.abs(personalLoss);
+                
                 let pakStr = pakNames.length > 0 ? `(${pakNames.join(',')})` : "";
-                details.push(`${name}${pakStr}: ${currentScores[i]}`);
+                details.push(`${name}${pakStr}: ${personalLoss}`);
             }
         }
+
+        // 고박 로직 적용: 고박 쓴 사람이 있으면 다른 패자들의 점수를 0으로 만들고 혼자 다 냄
+        if (gobakIdx !== -1) {
+            let totalLoss = 0;
+            let gobakName = document.getElementById(`name${gobakIdx}`).value || `P${gobakIdx+1}`;
+            for (let i = 0; i < 4; i++) {
+                if (i !== winnerIdx && !excludes[i]) {
+                    totalLoss += currentScores[i];
+                    if (i !== gobakIdx) currentScores[i] = 0;
+                }
+            }
+            currentScores[gobakIdx] = totalLoss;
+            details.push(`🚨 ${gobakName} 고박(독박)!`);
+        }
+
         currentScores[winnerIdx] = winSum;
 
         rounds.push({ 
@@ -179,7 +220,7 @@
             winnerName: document.getElementById(`name${winnerIdx}`).value || `P${winnerIdx+1}`,
             winScore: scoreVal,
             details: details.join(", "),
-            excluded: [...excludes] 
+            gobakIdx: gobakIdx
         });
         
         document.getElementById(`input${winnerIdx}`).value = '';
@@ -224,13 +265,13 @@
         document.getElementById('result').innerHTML = finalSettlement.join('<br>') || "정산 내역 없음";
     }
 
-    function saveGame() { localStorage.setItem("gostop_vMasterPro3", JSON.stringify(rounds)); }
+    function saveGame() { localStorage.setItem("gostop_vMasterPro4", JSON.stringify(rounds)); }
     function loadGame() {
-        const data = localStorage.getItem("gostop_vMasterPro3");
+        const data = localStorage.getItem("gostop_vMasterPro4");
         if(data) { rounds = JSON.parse(data); render(); }
     }
     function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
-    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.removeItem("gostop_vMasterPro3"); location.reload(); } }
+    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.removeItem("gostop_vMasterPro4"); location.reload(); } }
     function copyResult() {
         const text = document.getElementById('result').innerText;
         const historyText = document.getElementById('history').innerText;
