@@ -3,31 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고스톱 정산기 Ultimate</title>
+    <title>고스톱 정산기 Lite</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg,#1e3c72,#2a5298); margin:0; padding:20px; color:white; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 500px; }
         .card { background:white; color:#333; padding:18px; border-radius:15px; margin-bottom:20px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
         .nameInput { width: 20%; padding:8px; margin:2px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; }
-        .scoreRow { display:flex; flex-direction: column; margin-bottom:15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .row-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-        .row-bottom { display: flex; justify-content: flex-end; gap: 5px; }
+        .scoreRow { display:flex; justify-content: space-between; align-items: center; margin-bottom:12px; }
+        .scoreRow input[type="number"] { flex: 1; padding:10px; margin: 0 10px; border-radius:8px; border:1px solid #ccc; text-align:center; font-size: 18px; font-weight: bold; }
+        .exclude-label { font-size: 12px; color: #ff4d4d; font-weight: bold; display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 40px; }
+        .minusBtn { background:#ff4d4d; color:white; border:none; border-radius:8px; padding:10px 12px; font-weight:bold; cursor: pointer; }
         
-        .exclude-label { font-size: 12px; color: #ff4d4d; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 3px; }
-        input[type="number"] { flex: 1; padding:10px; margin: 0 10px; border-radius:8px; border:1px solid #ccc; text-align:center; font-size: 18px; font-weight: bold; }
-        
-        .btn-sm { padding: 5px 10px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; }
-        .btn-double { background: #f8f9fa; color: #333; }
-        .btn-double:active { background: #e2e6ea; }
-        .minusBtn { background:#ff4d4d; color:white; border:none; }
-
         .mainBtn { width:100%; padding:14px; margin-top:10px; border:none; border-radius:10px; font-size:16px; font-weight:bold; cursor: pointer; }
         .addBtn { background:#28a745; color:white; }
         .undoBtn { background:#ffc107; margin-top: 15px; }
         .resetBtn { background:#dc3545; color:white; margin-top: 20px; }
         
-        #result { white-space:pre-line; font-weight:bold; color: #2a5298; line-height: 1.8; border-top: 1px solid #eee; padding-top: 10px; font-size: 15px; }
-        #ranking { line-height: 1.6; margin-bottom: 15px; font-size: 15px; }
+        #result { white-space:pre-line; font-weight:bold; color: #2a5298; line-height: 1.8; border-top: 1px solid #eee; padding-top: 10px; }
+        #ranking { line-height: 1.6; margin-bottom: 10px; }
         .winner { background:#ffe066; padding:2px 5px; border-radius:4px; font-weight:bold; }
         .copyBtn { background: #6c757d; color: white; font-size: 12px; padding: 5px 10px; border-radius: 5px; float: right; border: none; cursor: pointer; }
     </style>
@@ -35,7 +28,7 @@
 <body>
 
 <div class="container">
-    <h2>🎴 고스톱 정산기 Ultimate</h2>
+    <h2>🎴 고스톱 정산기</h2>
 
     <div class="card">
         <b>👤 플레이어 이름</b><br><br>
@@ -46,56 +39,28 @@
     </div>
 
     <div class="card">
-        <b>📝 점수 입력 및 배수 적용</b><br><br>
-        
-        <div id="inputSection">
-            <div class="scoreRow">
-                <div class="row-top">
-                    <label class="exclude-label"><input type="checkbox" id="exA">광</label>
-                    <input type="number" id="scoreA" placeholder="0" onfocus="this.select()">
-                    <button class="btn-sm minusBtn" onclick="addMinus('scoreA')">+/-</button>
-                </div>
-                <div class="row-bottom">
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreA', 2)">피박/광박 (x2)</button>
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreA', 4)">멍박/고 (x4)</button>
-                </div>
-            </div>
-            <div class="scoreRow">
-                <div class="row-top">
-                    <label class="exclude-label"><input type="checkbox" id="exB">광</label>
-                    <input type="number" id="scoreB" placeholder="0" onfocus="this.select()">
-                    <button class="btn-sm minusBtn" onclick="addMinus('scoreB')">+/-</button>
-                </div>
-                <div class="row-bottom">
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreB', 2)">x2</button>
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreB', 4)">x4</button>
-                </div>
-            </div>
-            <div class="scoreRow">
-                <div class="row-top">
-                    <label class="exclude-label"><input type="checkbox" id="exC">광</label>
-                    <input type="number" id="scoreC" placeholder="0" onfocus="this.select()">
-                    <button class="btn-sm minusBtn" onclick="addMinus('scoreC')">+/-</button>
-                </div>
-                <div class="row-bottom">
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreC', 2)">x2</button>
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreC', 4)">x4</button>
-                </div>
-            </div>
-            <div class="scoreRow">
-                <div class="row-top">
-                    <label class="exclude-label"><input type="checkbox" id="exD">광</label>
-                    <input type="number" id="scoreD" placeholder="0" onfocus="this.select()">
-                    <button class="btn-sm minusBtn" onclick="addMinus('scoreD')">+/-</button>
-                </div>
-                <div class="row-bottom">
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreD', 2)">x2</button>
-                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreD', 4)">x4</button>
-                </div>
-            </div>
+        <b>📝 점수 입력 (광파는 사람 체크)</b><br><br>
+        <div class="scoreRow">
+            <label class="exclude-label"><input type="checkbox" id="exA">광</label>
+            <input type="number" id="scoreA" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreA')">+/-</button>
         </div>
-
-        <button class="mainBtn addBtn" onclick="addRound()">이번 판 저장</button>
+        <div class="scoreRow">
+            <label class="exclude-label"><input type="checkbox" id="exB">광</label>
+            <input type="number" id="scoreB" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreB')">+/-</button>
+        </div>
+        <div class="scoreRow">
+            <label class="exclude-label"><input type="checkbox" id="exC">광</label>
+            <input type="number" id="scoreC" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreC')">+/-</button>
+        </div>
+        <div class="scoreRow">
+            <label class="exclude-label"><input type="checkbox" id="exD">광</label>
+            <input type="number" id="scoreD" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreD')">+/-</button>
+        </div>
+        <button class="mainBtn addBtn" onclick="addRound()">판 저장</button>
         <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 판 취소</button>
     </div>
 
@@ -106,7 +71,7 @@
         <div id="result">정산 내역 없음</div>
     </div>
 
-    <button class="mainBtn resetBtn" onclick="resetGame()">전체 데이터 초기화</button>
+    <button class="mainBtn resetBtn" onclick="resetGame()">전체 초기화</button>
 </div>
 
 <script>
@@ -114,25 +79,17 @@
 
     window.onload = loadGame;
 
-    function saveGame() { localStorage.setItem("gostopData_final", JSON.stringify(rounds)); }
+    function saveGame() { localStorage.setItem("gostop_v4", JSON.stringify(rounds)); }
 
     function loadGame() {
-        let data = localStorage.getItem("gostopData_final");
+        let data = localStorage.getItem("gostop_v4");
         if (data) { rounds = JSON.parse(data); calculate(); }
     }
 
-    // 부호 반전
     function addMinus(id) {
         let input = document.getElementById(id);
         let val = parseInt(input.value) || 0;
         if (val !== 0) input.value = val * -1;
-    }
-
-    // 점수 배수 적용 (x2, x4 등)
-    function multiplyScore(id, factor) {
-        let input = document.getElementById(id);
-        let val = parseInt(input.value) || 0;
-        if (val !== 0) input.value = val * factor;
     }
 
     function getNames() {
@@ -162,7 +119,6 @@
         excluded.forEach((isEx, i) => { if(isEx) scores[i] = 0; });
         rounds.push({ scores, excluded });
 
-        // 입력창 초기화
         ["scoreA", "scoreB", "scoreC", "scoreD"].forEach(id => document.getElementById(id).value = "");
         ["exA", "exB", "exC", "exD"].forEach(id => document.getElementById(id).checked = false);
 
@@ -171,7 +127,7 @@
     }
 
     function undoLast() {
-        if (rounds.length === 0 || !confirm("마지막 판을 취소할까요?")) return;
+        if (rounds.length === 0 || !confirm("취소하시겠습니까?")) return;
         rounds.pop();
         calculate();
         saveGame();
@@ -197,14 +153,12 @@
             }
         });
 
-        // 순위 출력
-        let sorted = names.map((n, i) => ({ name: n, score: totalScores[i] }))
-                          .sort((a, b) => b.score - a.score);
+        let players = names.map((n, i) => ({ name: n, score: totalScores[i] }));
+        let sorted = [...players].sort((a, b) => b.score - a.score);
         document.getElementById("ranking").innerHTML = sorted.map((p, i) => 
-            `${i+1}등: <span class="${i==0 && p.score>0 ? 'winner' : ''}">${p.name} (${p.score})</span>`
+            `${i+1}등: <span class="${i==0 && p.score>0 ? 'winner' : ''}">${p.name} (${p.score.toLocaleString()})</span>`
         ).join("<br>");
 
-        // 모든 쌍 정산 및 상계
         let finalResults = [];
         for (let i = 0; i < 4; i++) {
             for (let j = i + 1; j < 4; j++) {
@@ -213,20 +167,16 @@
                 else if (net < 0) finalResults.push(`${names[j]} ⮕ ${names[i]} : ${Math.abs(net).toLocaleString()}점`);
             }
         }
-        document.getElementById("result").innerHTML = finalResults.join("<br>") || "정산할 내역이 없습니다.";
+        document.getElementById("result").innerHTML = finalResults.join("<br>") || "내역 없음";
     }
 
     function copyResult() {
         const text = document.getElementById("result").innerText;
-        navigator.clipboard.writeText("💰 고스톱 정산 결과 💰\n" + text).then(() => alert("클립보드에 복사되었습니다."));
+        navigator.clipboard.writeText("💰 정산 결과 💰\n" + text).then(() => alert("복사되었습니다."));
     }
 
     function resetGame() {
-        if (confirm("모든 데이터를 초기화하시겠습니까?")) {
-            rounds = [];
-            localStorage.removeItem("gostopData_final");
-            calculate();
-        }
+        if (confirm("초기화할까요?")) { rounds = []; localStorage.removeItem("gostop_v4"); calculate(); }
     }
 </script>
 </body>
