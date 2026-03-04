@@ -1,0 +1,317 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고스톱 정산기</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg,#1e3c72,#2a5298);
+    margin:0;
+    padding:20px;
+    color:white;
+}
+
+.card {
+    background:white;
+    color:#333;
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+h2 { text-align:center; }
+
+details summary { font-weight:bold; cursor:pointer; }
+
+.nameInput {
+    width:70px;
+    padding:5px;
+    margin:5px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    text-align:center;
+}
+
+.scoreRow {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
+
+.scoreRow input {
+    width:70px;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    text-align:center;
+}
+
+.minusBtn {
+    background:#ff4d4d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:8px 12px;
+    font-weight:bold;
+}
+
+.mainBtn {
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.addBtn { background:#28a745; color:white; }
+.undoBtn { background:#ffc107; }
+.resetBtn { background:#dc3545; color:white; }
+
+#result { white-space:pre-line; font-weight:bold; }
+#history { white-space:pre-line; max-height:200px; overflow-y:auto; font-size:14px; }
+
+.winner {
+    background:#ffe066;
+    padding:3px 6px;
+    border-radius:6px;
+    font-weight:bold;
+}
+
+
+
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3c72">
+</head>
+
+<body>
+
+<h2>🎴 고스톱 정산기</h2>
+
+<div class="card">
+<details>
+<summary>📖 사용법 보기</summary>
+<div>
+승자는 가져갈 총점수 입력<br>
+패자는 잃은 점수 입력 후 "-" 버튼 클릭<br>
+한 판 합계는 반드시 0이 되어야 합니다
+</div>
+</details>
+</div>
+
+<div class="card">
+<b>이름 설정</b><br>
+<input class="nameInput" id="nameA" placeholder="A">
+<input class="nameInput" id="nameB" placeholder="B">
+<input class="nameInput" id="nameC" placeholder="C">
+<input class="nameInput" id="nameD" placeholder="D">
+</div>
+
+<div class="card">
+<b>점수 입력</b>
+
+<div class="scoreRow">
+<input type="number" id="scoreA">
+<button class="minusBtn" onclick="addMinus('scoreA')">-</button>
+</div>
+
+<div class="scoreRow">
+<input type="number" id="scoreB">
+<button class="minusBtn" onclick="addMinus('scoreB')">-</button>
+</div>
+
+<div class="scoreRow">
+<input type="number" id="scoreC">
+<button class="minusBtn" onclick="addMinus('scoreC')">-</button>
+</div>
+
+<div class="scoreRow">
+<input type="number" id="scoreD">
+<button class="minusBtn" onclick="addMinus('scoreD')">-</button>
+</div>
+
+<button class="mainBtn addBtn" onclick="addRound()">판 추가</button>
+<button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 판 되돌리기</button>
+</div>
+
+<div class="card">
+<b>🏆 현재 순위</b>
+<div id="ranking"></div>
+</div>
+
+<div class="card">
+<b>💰 정산 결과</b>
+<div id="result">정산 결과 없음</div>
+</div>
+
+<div class="card">
+<b>📜 판 기록</b>
+<div id="history"></div>
+</div>
+
+<div class="card">
+<button class="mainBtn resetBtn"
+onmousedown="startHold()" 
+onmouseup="cancelHold()" 
+ontouchstart="startHold()" 
+ontouchend="cancelHold()">
+3초 길게 눌러 전체 초기화
+</button>
+</div>
+
+<script>
+let total=[0,0,0,0];
+let rounds=[];
+let holdTimer=null;
+
+window.onload=loadGame;
+
+function saveGame(){
+localStorage.setItem("gostopData",JSON.stringify({total,rounds}));
+}
+
+function loadGame(){
+let data=localStorage.getItem("gostopData");
+if(data){
+let obj=JSON.parse(data);
+total=obj.total||[0,0,0,0];
+rounds=obj.rounds||[];
+rebuildHistory();
+calculate();
+}
+}
+
+function addMinus(id){
+let input=document.getElementById(id);
+if(input.value.startsWith("-")){
+input.value=input.value.substring(1);
+}else{
+input.value="-"+input.value;
+}
+}
+
+function getNames(){
+return [
+document.getElementById("nameA").value||"A",
+document.getElementById("nameB").value||"B",
+document.getElementById("nameC").value||"C",
+document.getElementById("nameD").value||"D"
+];
+}
+
+function addRound(){
+let s=[
+parseInt(document.getElementById("scoreA").value)||0,
+parseInt(document.getElementById("scoreB").value)||0,
+parseInt(document.getElementById("scoreC").value)||0,
+parseInt(document.getElementById("scoreD").value)||0
+];
+
+let sum=s.reduce((a,b)=>a+b,0);
+if(sum!==0){alert("⚠ 합계가 0이 아닙니다");return;}
+
+for(let i=0;i<4;i++){total[i]+=s[i];}
+rounds.push(s);
+
+document.getElementById("scoreA").value="";
+document.getElementById("scoreB").value="";
+document.getElementById("scoreC").value="";
+document.getElementById("scoreD").value="";
+
+rebuildHistory();
+calculate();
+saveGame();
+}
+
+function undoLast(){
+if(rounds.length===0)return;
+let last=rounds.pop();
+for(let i=0;i<4;i++){total[i]-=last[i];}
+rebuildHistory();
+calculate();
+saveGame();
+}
+
+function rebuildHistory(){
+let names=getNames();
+let text="";
+let historyDiv=document.getElementById("history");
+
+rounds.forEach((r,i)=>{
+text+=`판 ${i+1}
+${names[0]}(${r[0]})  ${names[1]}(${r[1]})
+${names[2]}(${r[2]})  ${names[3]}(${r[3]})
+
+`;
+});
+
+historyDiv.innerText=text;
+}
+
+function calculate(){
+let names=getNames();
+let rankingDiv=document.getElementById("ranking");
+
+let players=names.map((n,i)=>({name:n,score:total[i]}));
+players.sort((a,b)=>b.score-a.score);
+
+let rankText="";
+players.forEach((p,i)=>{
+if(i===0 && p.score>0){
+rankText+=`🥇 <span class="winner">${p.name} (${p.score})</span><br>`;
+}else{
+rankText+=`${p.name} (${p.score})<br>`;
+}
+});
+rankingDiv.innerHTML=rankText;
+
+let receivers=players.filter(p=>p.score>0);
+let payers=players.filter(p=>p.score<0);
+
+let resultText="";
+receivers.forEach(r=>{
+let need=r.score;
+payers.forEach(p=>{
+let debt=Math.abs(p.score);
+if(debt>0&&need>0){
+let pay=Math.min(need,debt);
+resultText+=`${p.name}가 ${r.name}에게 ${pay}점 지급\n`;
+p.score+=pay;
+need-=pay;
+}
+});
+});
+
+document.getElementById("result").innerText=resultText||"정산 결과 없음";
+}
+
+function startHold(){
+holdTimer=setTimeout(()=>{
+localStorage.removeItem("gostopData");
+total=[0,0,0,0];
+rounds=[];
+document.getElementById("history").innerText="";
+document.getElementById("result").innerText="정산 결과 없음";
+document.getElementById("ranking").innerHTML="";
+alert("초기화 완료");
+},3000);
+}
+
+function cancelHold(){
+clearTimeout(holdTimer);
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+</body>
+</html>
