@@ -1,317 +1,277 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>고스톱 정산기</title>
 
-<style>
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg,#1e3c72,#2a5298);
-    margin:0;
-    padding:20px;
-    color:white;
-}
-
-.card {
-    background:white;
-    color:#333;
-    padding:15px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
-
-h2 { text-align:center; }
-
-details summary { font-weight:bold; cursor:pointer; }
-
-.nameInput {
-    width:70px;
-    padding:5px;
-    margin:5px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    text-align:center;
-}
-
-.scoreRow {
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
-}
-
-.scoreRow input {
-    width:70px;
-    padding:8px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    text-align:center;
-}
-
-.minusBtn {
-    background:#ff4d4d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    padding:8px 12px;
-    font-weight:bold;
-}
-
-.mainBtn {
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-    font-weight:bold;
-}
-
-.addBtn { background:#28a745; color:white; }
-.undoBtn { background:#ffc107; }
-.resetBtn { background:#dc3545; color:white; }
-
-#result { white-space:pre-line; font-weight:bold; }
-#history { white-space:pre-line; max-height:200px; overflow-y:auto; font-size:14px; }
-
-.winner {
-    background:#ffe066;
-    padding:3px 6px;
-    border-radius:6px;
-    font-weight:bold;
-}
-
-
-
-</style>
-
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1e3c72">
-</head>
 
+<style>
+body{
+  font-family:sans-serif;
+  margin:0;
+  padding:20px;
+  background:linear-gradient(135deg,#1e3c72,#2a5298);
+  color:white;
+}
+h1{text-align:center;}
+.card{
+  background:white;
+  color:black;
+  padding:15px;
+  border-radius:16px;
+  margin-bottom:20px;
+}
+input{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  font-size:16px;
+}
+button{
+  padding:10px;
+  margin:5px 0;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+}
+.primary{background:#4CAF50;color:white;}
+.danger{background:#ff4d4d;color:white;}
+.install{background:#ffcc00;}
+.scoreRow{
+  display:flex;
+  gap:5px;
+}
+.scoreRow input{
+  flex:1;
+}
+.minusBtn{
+  width:40px;
+  background:#555;
+  color:white;
+}
+.winner{
+  background:#ffd700 !important;
+}
+#progressBar{
+  height:6px;
+  width:0%;
+  background:#ff4d4d;
+  border-radius:6px;
+}
+</style>
+</head>
 <body>
 
-<h2>🎴 고스톱 정산기</h2>
+<h1>🎴 고스톱 정산기</h1>
+<div class="card">
+<h3>📖 사용 방법</h3>
+<div style="font-size:14px;line-height:1.6;">
+✔ 승자는 가져갈 <b>총 점수</b> 입력<br>
+✔ 패자는 <b>- 버튼</b> 눌러 음수로 잃은 점수 입력<br>
+✔ 한 판 합계는 반드시 <b>0</b> 이어야 함<br>
+✔ 합계가 0이 아니면 판 추가 안 됨
+</div>
+</div>
+    
+<div id="iosGuide" style="display:none;background:white;color:black;padding:10px;border-radius:10px;margin-bottom:15px;">
+📱 아이폰은 Safari → 공유 버튼 → "홈 화면에 추가"로 설치하세요.
+</div>
+
+<button id="installBtn" class="install" style="display:none;width:100%;">📲 앱 설치하기</button>
 
 <div class="card">
-<details>
-<summary>📖 사용법 보기</summary>
-<div>
-승자는 가져갈 총점수 입력<br>
-패자는 잃은 점수 입력 후 "-" 버튼 클릭<br>
-한 판 합계는 반드시 0이 되어야 합니다
-</div>
-</details>
-</div>
-
-<div class="card">
-<b>이름 설정</b><br>
-<input class="nameInput" id="nameA" placeholder="A">
-<input class="nameInput" id="nameB" placeholder="B">
-<input class="nameInput" id="nameC" placeholder="C">
-<input class="nameInput" id="nameD" placeholder="D">
-</div>
-
-<div class="card">
-<b>점수 입력</b>
-
-<div class="scoreRow">
-<input type="number" id="scoreA">
-<button class="minusBtn" onclick="addMinus('scoreA')">-</button>
-</div>
-
-<div class="scoreRow">
-<input type="number" id="scoreB">
-<button class="minusBtn" onclick="addMinus('scoreB')">-</button>
-</div>
-
-<div class="scoreRow">
-<input type="number" id="scoreC">
-<button class="minusBtn" onclick="addMinus('scoreC')">-</button>
-</div>
-
-<div class="scoreRow">
-<input type="number" id="scoreD">
-<button class="minusBtn" onclick="addMinus('scoreD')">-</button>
-</div>
-
-<button class="mainBtn addBtn" onclick="addRound()">판 추가</button>
-<button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 판 되돌리기</button>
+<h3>플레이어 이름</h3>
+<input id="name1" placeholder="플레이어1">
+<input id="name2" placeholder="플레이어2">
+<input id="name3" placeholder="플레이어3">
+<input id="name4" placeholder="플레이어4">
 </div>
 
 <div class="card">
-<b>🏆 현재 순위</b>
-<div id="ranking"></div>
+<h3>점수 입력</h3>
+<div id="scoreInputs"></div>
+<button class="primary" onclick="addRound()">판 추가</button>
+<button onclick="undoLast()">↩ 마지막 판 되돌리기</button>
 </div>
 
 <div class="card">
-<b>💰 정산 결과</b>
-<div id="result">정산 결과 없음</div>
+<h3>현재 총점</h3>
+<div id="totals"></div>
 </div>
 
 <div class="card">
-<b>📜 판 기록</b>
+<h3>판 기록</h3>
 <div id="history"></div>
 </div>
 
 <div class="card">
-<button class="mainBtn resetBtn"
-onmousedown="startHold()" 
-onmouseup="cancelHold()" 
-ontouchstart="startHold()" 
-ontouchend="cancelHold()">
-3초 길게 눌러 전체 초기화
-</button>
+<button id="resetBtn" class="danger" style="width:100%;">⚠ 전체 초기화 (3초 길게 누르기)</button>
+<div style="background:#ddd;border-radius:6px;margin-top:8px;">
+  <div id="progressBar"></div>
+</div>
 </div>
 
 <script>
-let total=[0,0,0,0];
-let rounds=[];
-let holdTimer=null;
+let players=["","","",""];
+let totals=[0,0,0,0];
+let history=[];
+let deferredPrompt;
 
-window.onload=loadGame;
+const scoreInputs=document.getElementById("scoreInputs");
 
-function saveGame(){
-localStorage.setItem("gostopData",JSON.stringify({total,rounds}));
+function renderScoreInputs(){
+  scoreInputs.innerHTML="";
+  for(let i=0;i<4;i++){
+    let row=document.createElement("div");
+    row.className="scoreRow";
+    row.innerHTML=`
+      <input type="text" inputmode="numeric" pattern="-?[0-9]*" id="score${i}" placeholder="0">
+      <button class="minusBtn" onclick="toggleMinus(${i})">-</button>
+    `;
+    scoreInputs.appendChild(row);
+  }
 }
+renderScoreInputs();
 
-function loadGame(){
-let data=localStorage.getItem("gostopData");
-if(data){
-let obj=JSON.parse(data);
-total=obj.total||[0,0,0,0];
-rounds=obj.rounds||[];
-rebuildHistory();
-calculate();
-}
-}
-
-function addMinus(id){
-let input=document.getElementById(id);
-if(input.value.startsWith("-")){
-input.value=input.value.substring(1);
-}else{
-input.value="-"+input.value;
-}
-}
-
-function getNames(){
-return [
-document.getElementById("nameA").value||"A",
-document.getElementById("nameB").value||"B",
-document.getElementById("nameC").value||"C",
-document.getElementById("nameD").value||"D"
-];
+function toggleMinus(i){
+  let input=document.getElementById("score"+i);
+  if(input.value.startsWith("-")){
+    input.value=input.value.replace("-","");
+  }else{
+    input.value="-"+input.value;
+  }
 }
 
 function addRound(){
-let s=[
-parseInt(document.getElementById("scoreA").value)||0,
-parseInt(document.getElementById("scoreB").value)||0,
-parseInt(document.getElementById("scoreC").value)||0,
-parseInt(document.getElementById("scoreD").value)||0
-];
+  players=[
+    name1.value||"P1",
+    name2.value||"P2",
+    name3.value||"P3",
+    name4.value||"P4"
+  ];
+  let round=[];
+  let sum=0;
+  for(let i=0;i<4;i++){
+    let val=parseInt(document.getElementById("score"+i).value)||0;
+    round.push(val);
+    sum+=val;
+  }
+  if(sum!==0){
+    alert("한 판 합계는 0이어야 합니다!");
+    return;
+  }
+  history.push(round);
+  for(let i=0;i<4;i++){
+    totals[i]+=round[i];
+  }
+  saveData();
+  render();
+  renderHistory();
+}
 
-let sum=s.reduce((a,b)=>a+b,0);
-if(sum!==0){alert("⚠ 합계가 0이 아닙니다");return;}
+function render(){
+  let html="";
+  let max=Math.max(...totals);
+  for(let i=0;i<4;i++){
+    html+=`<div class="${totals[i]===max?'winner':''}">
+      ${players[i]} : ${totals[i]}
+    </div>`;
+  }
+  document.getElementById("totals").innerHTML=html;
+}
 
-for(let i=0;i<4;i++){total[i]+=s[i];}
-rounds.push(s);
-
-document.getElementById("scoreA").value="";
-document.getElementById("scoreB").value="";
-document.getElementById("scoreC").value="";
-document.getElementById("scoreD").value="";
-
-rebuildHistory();
-calculate();
-saveGame();
+function renderHistory(){
+  let html="";
+  history.forEach((r,idx)=>{
+    html+=`<div> ${idx+1}판 : ${r.join(", ")}</div>`;
+  });
+  document.getElementById("history").innerHTML=html;
 }
 
 function undoLast(){
-if(rounds.length===0)return;
-let last=rounds.pop();
-for(let i=0;i<4;i++){total[i]-=last[i];}
-rebuildHistory();
-calculate();
-saveGame();
+  if(history.length===0)return;
+  let last=history.pop();
+  for(let i=0;i<4;i++){
+    totals[i]-=last[i];
+  }
+  saveData();
+  render();
+  renderHistory();
 }
 
-function rebuildHistory(){
-let names=getNames();
-let text="";
-let historyDiv=document.getElementById("history");
-
-rounds.forEach((r,i)=>{
-text+=`판 ${i+1}
-${names[0]}(${r[0]})  ${names[1]}(${r[1]})
-${names[2]}(${r[2]})  ${names[3]}(${r[3]})
-
-`;
-});
-
-historyDiv.innerText=text;
+function saveData(){
+  localStorage.setItem("gostopData",JSON.stringify({
+    players,totals,history
+  }));
 }
 
-function calculate(){
-let names=getNames();
-let rankingDiv=document.getElementById("ranking");
-
-let players=names.map((n,i)=>({name:n,score:total[i]}));
-players.sort((a,b)=>b.score-a.score);
-
-let rankText="";
-players.forEach((p,i)=>{
-if(i===0 && p.score>0){
-rankText+=`🥇 <span class="winner">${p.name} (${p.score})</span><br>`;
-}else{
-rankText+=`${p.name} (${p.score})<br>`;
+function loadData(){
+  let data=localStorage.getItem("gostopData");
+  if(!data)return;
+  let parsed=JSON.parse(data);
+  players=parsed.players;
+  totals=parsed.totals;
+  history=parsed.history;
+  name1.value=players[0];
+  name2.value=players[1];
+  name3.value=players[2];
+  name4.value=players[3];
+  render();
+  renderHistory();
 }
-});
-rankingDiv.innerHTML=rankText;
+loadData();
 
-let receivers=players.filter(p=>p.score>0);
-let payers=players.filter(p=>p.score<0);
+let pressTimer;
+let progress=0;
+const progressBar=document.getElementById("progressBar");
+const resetBtn=document.getElementById("resetBtn");
 
-let resultText="";
-receivers.forEach(r=>{
-let need=r.score;
-payers.forEach(p=>{
-let debt=Math.abs(p.score);
-if(debt>0&&need>0){
-let pay=Math.min(need,debt);
-resultText+=`${p.name}가 ${r.name}에게 ${pay}점 지급\n`;
-p.score+=pay;
-need-=pay;
+resetBtn.addEventListener("mousedown",startPress);
+resetBtn.addEventListener("touchstart",startPress);
+resetBtn.addEventListener("mouseup",cancelPress);
+resetBtn.addEventListener("mouseleave",cancelPress);
+resetBtn.addEventListener("touchend",cancelPress);
+
+function startPress(){
+  progress=0;
+  progressBar.style.width="0%";
+  pressTimer=setInterval(()=>{
+    progress+=3.3;
+    progressBar.style.width=progress+"%";
+    if(progress>=100){
+      clearInterval(pressTimer);
+      localStorage.clear();
+      location.reload();
+    }
+  },100);
 }
-});
-});
-
-document.getElementById("result").innerText=resultText||"정산 결과 없음";
-}
-
-function startHold(){
-holdTimer=setTimeout(()=>{
-localStorage.removeItem("gostopData");
-total=[0,0,0,0];
-rounds=[];
-document.getElementById("history").innerText="";
-document.getElementById("result").innerText="정산 결과 없음";
-document.getElementById("ranking").innerHTML="";
-alert("초기화 완료");
-},3000);
+function cancelPress(){
+  clearInterval(pressTimer);
+  progressBar.style.width="0%";
 }
 
-function cancelHold(){
-clearTimeout(holdTimer);
-}
-</script>
-<script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 }
+
+window.addEventListener("beforeinstallprompt",(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  installBtn.style.display="block";
+});
+installBtn.addEventListener("click",async()=>{
+  installBtn.style.display="none";
+  deferredPrompt.prompt();
+  deferredPrompt=null;
+});
+
+if(/iPhone|iPad|iPod/i.test(navigator.userAgent)){
+  document.getElementById("iosGuide").style.display="block";
+}
 </script>
+
 </body>
 </html>
