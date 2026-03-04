@@ -57,8 +57,8 @@
             <p>2. <b>승자/점수</b>: 승자를 체크하고 점수를 넣으세요.</p>
             <p>3. <b>패자 옵션</b>: 박, 고/흔듦, 추가x2 등을 체크하세요.</p>
             <p>4. <b>휴식</b>: 참여 안 한 사람은 '휴식' 클릭.</p>
-            <p>5. <b>고박(독박)</b>: 고박 쓴 1인만 남기고 나머진 '휴식' 클릭.</p>
-            <button class="mainBtn addBtn" onclick="closeModal()">닫기</button>
+            <p>5. <b>🚨 고박(독박) 처리</b>: 승자는 패자들의 점수를 모두 합산하여 점수칸에 입력한 뒤, <b>고박 쓴 사람 1인만 남기고 다른 패자들은 모두 '휴식'</b>을 클릭하세요.</p>
+            <button class="mainBtn addBtn" onclick="closeModal()">확인했습니다</button>
         </div>
     </div>
 
@@ -131,7 +131,7 @@
         for (let i = 0; i < 4; i++) {
             document.getElementById(`label${i}`).innerText = document.getElementById(`name${i}`).value || `P${i+1}`;
         }
-        render(); // 이름 변경 시 즉시 랭킹판 업데이트
+        render();
     }
 
     function changeWinner(idx) {
@@ -213,7 +213,6 @@
         let matrix = Array.from(Array(4), () => Array(4).fill(0));
         let historyHtml = "";
 
-        // 모든 판을 순회하며 누적 점수와 상계 매트릭스 계산
         rounds.forEach((r, idx) => {
             r.scores.forEach((s, i) => {
                 totals[i] += s;
@@ -224,13 +223,11 @@
 
         document.getElementById('history').innerHTML = historyHtml || "기록 없음";
 
-        // 랭킹 표시
         let sorted = names.map((n, i) => ({ n, s: totals[i] })).sort((a,b) => b.s - a.s);
         document.getElementById('ranking').innerHTML = sorted.map((p, i) => 
             `${i+1}위: <span class="${i==0 && p.s>0?'rank-winner':''}">${p.n} (${p.s.toLocaleString()})</span>`
         ).join('<br>');
 
-        // 최종 상계 정산 (A -> B와 B -> A를 서로 지움)
         let final = [];
         for (let i = 0; i < 4; i++) {
             for (let j = i + 1; j < 4; j++) {
