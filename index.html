@@ -3,135 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고스톱 정산기 Pro</title>
-
+    <title>고스톱 정산기 Ultimate</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Apple SD Gothic Neo, sans-serif;
-            background: linear-gradient(135deg,#1e3c72,#2a5298);
-            margin:0;
-            padding:20px;
-            color:white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg,#1e3c72,#2a5298); margin:0; padding:20px; color:white; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 500px; }
+        .card { background:white; color:#333; padding:18px; border-radius:15px; margin-bottom:20px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
+        .nameInput { width: 20%; padding:8px; margin:2px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; }
+        .scoreRow { display:flex; flex-direction: column; margin-bottom:15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .row-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+        .row-bottom { display: flex; justify-content: flex-end; gap: 5px; }
+        
+        .exclude-label { font-size: 12px; color: #ff4d4d; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 3px; }
+        input[type="number"] { flex: 1; padding:10px; margin: 0 10px; border-radius:8px; border:1px solid #ccc; text-align:center; font-size: 18px; font-weight: bold; }
+        
+        .btn-sm { padding: 5px 10px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; }
+        .btn-double { background: #f8f9fa; color: #333; }
+        .btn-double:active { background: #e2e6ea; }
+        .minusBtn { background:#ff4d4d; color:white; border:none; }
 
-        .card {
-            background:white;
-            color:#333;
-            padding:18px;
-            border-radius:15px;
-            margin-bottom:20px;
-            box-shadow:0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        h2 { text-align:center; margin-top: 0; }
-
-        .nameInput {
-            width: 20%;
-            padding:8px;
-            margin:2px;
-            border-radius:8px;
-            border:1px solid #ddd;
-            text-align:center;
-            font-weight: bold;
-        }
-
-        .scoreRow {
-            display:flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom:12px;
-        }
-
-        .scoreRow label { font-weight: bold; width: 60px; }
-
-        .scoreRow input {
-            flex: 1;
-            padding:10px;
-            margin: 0 10px;
-            border-radius:8px;
-            border:1px solid #ccc;
-            text-align:center;
-            font-size: 16px;
-        }
-
-        .minusBtn {
-            background:#ff4d4d;
-            color:white;
-            border:none;
-            border-radius:8px;
-            padding:10px 15px;
-            font-weight:bold;
-            cursor: pointer;
-        }
-
-        .mainBtn {
-            width:100%;
-            padding:14px;
-            margin-top:10px;
-            border:none;
-            border-radius:10px;
-            font-size:16px;
-            font-weight:bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
+        .mainBtn { width:100%; padding:14px; margin-top:10px; border:none; border-radius:10px; font-size:16px; font-weight:bold; cursor: pointer; }
         .addBtn { background:#28a745; color:white; }
-        .addBtn:active { background:#218838; }
         .undoBtn { background:#ffc107; margin-top: 15px; }
-        .resetBtn { background:#dc3545; color:white; }
-
-        #result { 
-            white-space:pre-line; 
-            font-weight:bold; 
-            color: #2a5298; 
-            line-height: 1.8;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-        }
-
-        #ranking { line-height: 1.6; margin-bottom: 10px; }
-
-        #history { 
-            white-space:pre-line; 
-            max-height:150px; 
-            overflow-y:auto; 
-            font-size:13px; 
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 8px;
-            color: #666;
-        }
-
-        .winner {
-            background:#ffe066;
-            padding:2px 5px;
-            border-radius:4px;
-            font-weight:bold;
-        }
-
-        .copyBtn {
-            background: #6c757d;
-            color: white;
-            font-size: 12px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            float: right;
-            border: none;
-            cursor: pointer;
-        }
+        .resetBtn { background:#dc3545; color:white; margin-top: 20px; }
+        
+        #result { white-space:pre-line; font-weight:bold; color: #2a5298; line-height: 1.8; border-top: 1px solid #eee; padding-top: 10px; font-size: 15px; }
+        #ranking { line-height: 1.6; margin-bottom: 15px; font-size: 15px; }
+        .winner { background:#ffe066; padding:2px 5px; border-radius:4px; font-weight:bold; }
+        .copyBtn { background: #6c757d; color: white; font-size: 12px; padding: 5px 10px; border-radius: 5px; float: right; border: none; cursor: pointer; }
     </style>
 </head>
-
 <body>
 
 <div class="container">
-    <h2>🎴 고스톱 정산기 Pro</h2>
+    <h2>🎴 고스톱 정산기 Ultimate</h2>
 
     <div class="card">
         <b>👤 플레이어 이름</b><br><br>
@@ -142,184 +46,188 @@
     </div>
 
     <div class="card">
-        <b>📝 이번 판 점수 입력</b><br><br>
-        <div class="scoreRow">
-            <label id="lblA">A</label>
-            <input type="number" id="scoreA" placeholder="0" onfocus="this.select()">
-            <button class="minusBtn" onclick="addMinus('scoreA')">+/-</button>
+        <b>📝 점수 입력 및 배수 적용</b><br><br>
+        
+        <div id="inputSection">
+            <div class="scoreRow">
+                <div class="row-top">
+                    <label class="exclude-label"><input type="checkbox" id="exA">광</label>
+                    <input type="number" id="scoreA" placeholder="0" onfocus="this.select()">
+                    <button class="btn-sm minusBtn" onclick="addMinus('scoreA')">+/-</button>
+                </div>
+                <div class="row-bottom">
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreA', 2)">피박/광박 (x2)</button>
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreA', 4)">멍박/고 (x4)</button>
+                </div>
+            </div>
+            <div class="scoreRow">
+                <div class="row-top">
+                    <label class="exclude-label"><input type="checkbox" id="exB">광</label>
+                    <input type="number" id="scoreB" placeholder="0" onfocus="this.select()">
+                    <button class="btn-sm minusBtn" onclick="addMinus('scoreB')">+/-</button>
+                </div>
+                <div class="row-bottom">
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreB', 2)">x2</button>
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreB', 4)">x4</button>
+                </div>
+            </div>
+            <div class="scoreRow">
+                <div class="row-top">
+                    <label class="exclude-label"><input type="checkbox" id="exC">광</label>
+                    <input type="number" id="scoreC" placeholder="0" onfocus="this.select()">
+                    <button class="btn-sm minusBtn" onclick="addMinus('scoreC')">+/-</button>
+                </div>
+                <div class="row-bottom">
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreC', 2)">x2</button>
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreC', 4)">x4</button>
+                </div>
+            </div>
+            <div class="scoreRow">
+                <div class="row-top">
+                    <label class="exclude-label"><input type="checkbox" id="exD">광</label>
+                    <input type="number" id="scoreD" placeholder="0" onfocus="this.select()">
+                    <button class="btn-sm minusBtn" onclick="addMinus('scoreD')">+/-</button>
+                </div>
+                <div class="row-bottom">
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreD', 2)">x2</button>
+                    <button class="btn-sm btn-double" onclick="multiplyScore('scoreD', 4)">x4</button>
+                </div>
+            </div>
         </div>
-        <div class="scoreRow">
-            <label id="lblB">B</label>
-            <input type="number" id="scoreB" placeholder="0" onfocus="this.select()">
-            <button class="minusBtn" onclick="addMinus('scoreB')">+/-</button>
-        </div>
-        <div class="scoreRow">
-            <label id="lblC">C</label>
-            <input type="number" id="scoreC" placeholder="0" onfocus="this.select()">
-            <button class="minusBtn" onclick="addMinus('scoreC')">+/-</button>
-        </div>
-        <div class="scoreRow">
-            <label id="lblD">D</label>
-            <input type="number" id="scoreD" placeholder="0" onfocus="this.select()">
-            <button class="minusBtn" onclick="addMinus('scoreD')">+/-</button>
-        </div>
-        <button class="mainBtn addBtn" onclick="addRound()">판 추가 (기록)</button>
+
+        <button class="mainBtn addBtn" onclick="addRound()">이번 판 저장</button>
         <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 판 취소</button>
     </div>
 
     <div class="card">
-        <b>🏆 누적 순위</b>
+        <b>🏆 누적 순위 및 정산</b>
         <div id="ranking"></div>
-        
-        <b>💰 모든 쌍(Pair) 정산 결과</b>
         <button class="copyBtn" onclick="copyResult()">결과 복사</button>
         <div id="result">정산 내역 없음</div>
-    </div>
-
-    <div class="card">
-        <b>📜 판별 기록</b>
-        <div id="history"></div>
     </div>
 
     <button class="mainBtn resetBtn" onclick="resetGame()">전체 데이터 초기화</button>
 </div>
 
 <script>
-    let total = [0, 0, 0, 0];
-    let rounds = [];
+    let rounds = []; 
 
     window.onload = loadGame;
 
-    function saveGame() {
-        localStorage.setItem("gostopData_v2", JSON.stringify({ total, rounds }));
-    }
+    function saveGame() { localStorage.setItem("gostopData_final", JSON.stringify(rounds)); }
 
     function loadGame() {
-        let data = localStorage.getItem("gostopData_v2");
-        if (data) {
-            let obj = JSON.parse(data);
-            total = obj.total || [0, 0, 0, 0];
-            rounds = obj.rounds || [];
-            rebuildHistory();
-            calculate();
-        }
+        let data = localStorage.getItem("gostopData_final");
+        if (data) { rounds = JSON.parse(data); calculate(); }
     }
 
+    // 부호 반전
     function addMinus(id) {
         let input = document.getElementById(id);
-        if (input.value.startsWith("-")) {
-            input.value = input.value.substring(1);
-        } else if (input.value !== "") {
-            input.value = "-" + input.value;
-        } else {
-            input.value = "-";
-        }
+        let val = parseInt(input.value) || 0;
+        if (val !== 0) input.value = val * -1;
+    }
+
+    // 점수 배수 적용 (x2, x4 등)
+    function multiplyScore(id, factor) {
+        let input = document.getElementById(id);
+        let val = parseInt(input.value) || 0;
+        if (val !== 0) input.value = val * factor;
     }
 
     function getNames() {
-        const names = [
+        return [
             document.getElementById("nameA").value || "A",
             document.getElementById("nameB").value || "B",
             document.getElementById("nameC").value || "C",
             document.getElementById("nameD").value || "D"
         ];
-        // 입력 UI 라벨 동기화
-        document.getElementById("lblA").innerText = names[0];
-        document.getElementById("lblB").innerText = names[1];
-        document.getElementById("lblC").innerText = names[2];
-        document.getElementById("lblD").innerText = names[3];
-        return names;
     }
 
     function addRound() {
-        let s = [
+        let scores = [
             parseInt(document.getElementById("scoreA").value) || 0,
             parseInt(document.getElementById("scoreB").value) || 0,
             parseInt(document.getElementById("scoreC").value) || 0,
             parseInt(document.getElementById("scoreD").value) || 0
         ];
+        
+        let excluded = [
+            document.getElementById("exA").checked,
+            document.getElementById("exB").checked,
+            document.getElementById("exC").checked,
+            document.getElementById("exD").checked
+        ];
 
-        // 합계가 0이 아니어도 진행 가능하도록 수정됨
-        for (let i = 0; i < 4; i++) { total[i] += s[i]; }
-        rounds.push(s);
+        excluded.forEach((isEx, i) => { if(isEx) scores[i] = 0; });
+        rounds.push({ scores, excluded });
 
-        // 입력칸 초기화
+        // 입력창 초기화
         ["scoreA", "scoreB", "scoreC", "scoreD"].forEach(id => document.getElementById(id).value = "");
+        ["exA", "exB", "exC", "exD"].forEach(id => document.getElementById(id).checked = false);
 
-        rebuildHistory();
         calculate();
         saveGame();
     }
 
     function undoLast() {
-        if (rounds.length === 0) return;
-        if (!confirm("마지막 판 기록을 삭제할까요?")) return;
-        let last = rounds.pop();
-        for (let i = 0; i < 4; i++) { total[i] -= last[i]; }
-        rebuildHistory();
+        if (rounds.length === 0 || !confirm("마지막 판을 취소할까요?")) return;
+        rounds.pop();
         calculate();
         saveGame();
     }
 
-    function rebuildHistory() {
-        let names = getNames();
-        let text = "";
-        rounds.forEach((r, i) => {
-            text += `[${i + 1}판] ${names[0]}:${r[0]} | ${names[1]}:${r[1]} | ${names[2]}:${r[2]} | ${names[3]}:${r[3]}\n`;
-        });
-        document.getElementById("history").innerText = text || "기록 없음";
-    }
-
     function calculate() {
         let names = getNames();
-        const n = names.length;
+        let totalScores = [0, 0, 0, 0];
+        let pairDebts = Array.from(Array(4), () => Array(4).fill(0));
 
-        // 1. 순위 표시
-        let players = names.map((n, i) => ({ name: n, score: total[i] }));
-        let sortedPlayers = [...players].sort((a, b) => b.score - a.score);
+        rounds.forEach(round => {
+            let s = round.scores;
+            let ex = round.excluded;
+            for(let i=0; i<4; i++) totalScores[i] += s[i];
 
-        let rankText = "";
-        sortedPlayers.forEach((p, i) => {
-            const isWinner = i === 0 && p.score > sortedPlayers[1]?.score;
-            rankText += `${i+1}등: <span class="${isWinner ? 'winner' : ''}">${p.name} (${p.score})</span><br>`;
-        });
-        document.getElementById("ranking").innerHTML = rankText;
-
-        // 2. 모든 쌍(Pair) 정산 (상대적 차이 계산)
-        let finalSettlements = [];
-        for (let i = 0; i < n; i++) {
-            for (let j = i + 1; j < n; j++) {
-                let diff = total[i] - total[j];
-                if (diff > 0) {
-                    // i가 j보다 점수가 높으므로 j가 i에게 준다
-                    finalSettlements.push(`${names[j]} ⮕ ${names[i]} : ${diff.toLocaleString()}점`);
-                } else if (diff < 0) {
-                    // j가 i보다 점수가 높으므로 i가 j에게 준다
-                    finalSettlements.push(`${names[i]} ⮕ ${names[j]} : ${Math.abs(diff).toLocaleString()}점`);
+            for (let i = 0; i < 4; i++) {
+                for (let j = i + 1; j < 4; j++) {
+                    if (ex[i] || ex[j]) continue; 
+                    let diff = s[i] - s[j];
+                    if (diff > 0) pairDebts[j][i] += diff; 
+                    else if (diff < 0) pairDebts[i][j] += Math.abs(diff);
                 }
             }
-        }
+        });
 
-        document.getElementById("result").innerHTML = finalSettlements.join("<br>") || "정산 내역 없음";
+        // 순위 출력
+        let sorted = names.map((n, i) => ({ name: n, score: totalScores[i] }))
+                          .sort((a, b) => b.score - a.score);
+        document.getElementById("ranking").innerHTML = sorted.map((p, i) => 
+            `${i+1}등: <span class="${i==0 && p.score>0 ? 'winner' : ''}">${p.name} (${p.score})</span>`
+        ).join("<br>");
+
+        // 모든 쌍 정산 및 상계
+        let finalResults = [];
+        for (let i = 0; i < 4; i++) {
+            for (let j = i + 1; j < 4; j++) {
+                let net = pairDebts[i][j] - pairDebts[j][i];
+                if (net > 0) finalResults.push(`${names[i]} ⮕ ${names[j]} : ${net.toLocaleString()}점`);
+                else if (net < 0) finalResults.push(`${names[j]} ⮕ ${names[i]} : ${Math.abs(net).toLocaleString()}점`);
+            }
+        }
+        document.getElementById("result").innerHTML = finalResults.join("<br>") || "정산할 내역이 없습니다.";
     }
 
     function copyResult() {
         const text = document.getElementById("result").innerText;
-        navigator.clipboard.writeText("💰 고스톱 정산 결과 💰\n\n" + text)
-            .then(() => alert("정산 결과가 클립보드에 복사되었습니다."));
+        navigator.clipboard.writeText("💰 고스톱 정산 결과 💰\n" + text).then(() => alert("클립보드에 복사되었습니다."));
     }
 
     function resetGame() {
-        if (confirm("모든 데이터를 삭제하고 초기화할까요?")) {
-            localStorage.removeItem("gostopData_v2");
-            total = [0, 0, 0, 0];
+        if (confirm("모든 데이터를 초기화하시겠습니까?")) {
             rounds = [];
-            rebuildHistory();
+            localStorage.removeItem("gostopData_final");
             calculate();
-            alert("초기화 완료");
         }
     }
 </script>
-
 </body>
 </html>
