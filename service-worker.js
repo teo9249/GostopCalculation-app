@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = "gostop-cache-v1";
+﻿const CACHE_NAME = "gostop-cache-v4";
 const urlsToCache = [
   "./",
   "./index.html",
@@ -17,4 +17,5 @@ self.addEventListener("fetch", event => {
     caches.match(event.request)
       .then(response => response || fetch(event.request))
   );
+
 });
