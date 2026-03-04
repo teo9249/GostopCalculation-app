@@ -3,228 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3c72">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-icon" content="icon-192.png">
-    <title>고스톱 정산 Master Pro</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <title>고스톱 정산 Master</title>
     <style>
-        :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; --purple: #6610f2; }
+        :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; }
         body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--primary), var(--secondary)); margin:0; padding:10px; color:white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+        
         .container { width: 100%; max-width: 500px; padding-bottom: 30px; }
+        .header { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; }
+        h2 { margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); font-size: 1.4rem; }
+        .help-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 20px; padding: 5px 15px; font-size: 12px; cursor: pointer; }
+
         .card { background:white; color:#333; padding:15px; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
         .name-section { display: flex; justify-content: space-between; gap: 5px; }
         .nameInput { width: 22%; padding:10px 5px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; font-size: 14px; outline: none; }
-        
-        /* 광 정산 전용 스타일 */
-        .kwang-box { display: flex; align-items: center; justify-content: space-between; background: #f8f0ff; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e0cffc; }
-        .kwang-sel { padding: 5px; border-radius: 5px; border: 1px solid var(--purple); font-weight: bold; }
-        .kwang-btn-sm { background: var(--purple); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .nameInput:focus { border-color: var(--secondary); background: #f0f7ff; }
 
-        .player-row { border-bottom: 1px solid #eee; padding: 12px 0; }
+        /* 모달 스타일 */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; color: #333; padding: 25px; border-radius: 20px; max-width: 450px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal-content h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .modal-content p { font-size: 14px; line-height: 1.6; margin: 10px 0; }
+        .ios-tip { background: #f8f9fa; padding: 12px; border-radius: 10px; border-left: 4px solid #007aff; margin-top: 15px; }
+
+        /* 플레이어 행 스타일 */
+        .player-row { border-bottom: 1px solid #eee; padding: 15px 0; }
         .row-main { display: flex; align-items: center; gap: 10px; }
         .role-radio { transform: scale(1.4); cursor: pointer; }
-        .player-name-label { width: 70px; font-weight: bold; font-size: 15px; color: #333; overflow: hidden; }
-        .score-input { width: 90px; padding: 10px; border-radius: 10px; border: 2.5px solid var(--accent); text-align: center; font-size: 18px; font-weight: bold; }
-        .score-input:disabled { opacity: 0; pointer-events: none; }
-        
-        .row-options { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; padding-left: 25px; }
-        .opt-btn { font-size: 11px; padding: 6px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; }
+        .player-name-label { width: 80px; font-weight: bold; font-size: 15px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .score-input { width: 100%; max-width: 110px; padding: 12px; border-radius: 10px; border: 2.5px solid var(--accent); text-align: center; font-size: 20px; font-weight: bold; outline: none; }
+        .score-input:disabled { border-color: #eee; background: #f9f9f9; opacity: 0; pointer-events: none; }
+        .win-tag { font-weight: bold; color: var(--accent); font-size: 14px; display: none; }
+
+        .row-options { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 30px; margin-top: 10px; }
+        .opt-btn { font-size: 11px; padding: 8px 10px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; }
         .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; }
-        .opt-btn.exclude-btn.active { background: #6c757d; color: white; }
+        .opt-btn.multi-btn.active { background: #6610f2; color: white; border-color: #6610f2; }
+        .opt-btn.exclude-btn.active { background: #6c757d; color: white; border-color: #6c757d; }
 
-        .mainBtn { width:100%; padding:15px; margin-top:8px; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor: pointer; }
+        .mainBtn { width:100%; padding:18px; margin-top:10px; border:none; border-radius:15px; font-size:17px; font-weight:bold; cursor: pointer; transition: 0.1s; }
+        .mainBtn:active { transform: scale(0.98); }
         .addBtn { background: var(--accent); color:white; }
-        .undoBtn { background: var(--warning); color: #333; }
-        .resetBtn { background: var(--danger); color:white; margin-top: 20px; font-size: 13px; opacity: 0.8; }
+        .undoBtn { background: var(--warning); color: #333; margin-top: 10px; }
+        .resetBtn { background: var(--danger); color:white; margin-top: 30px; font-size: 14px; opacity: 0.8; }
 
-        #result { white-space:pre-line; font-weight:bold; color: var(--secondary); line-height: 1.6; border-top: 1px solid #eee; padding-top: 10px; font-size: 15px; }
-        #ranking { line-height: 1.8; margin-bottom: 10px; font-size: 14px; }
-        .history-list { font-size: 12px; color: #555; max-height: 150px; overflow-y: auto; border-top: 1px solid #eee; margin-top: 10px; }
-        .history-item { padding: 5px 0; border-bottom: 1px dashed #ddd; }
+        #result { white-space:pre-line; font-weight:bold; color: var(--secondary); line-height: 1.7; border-top: 1px solid #eee; padding-top: 15px; font-size: 16px; }
+        #ranking { line-height: 1.9; margin-bottom: 15px; font-size: 15px; }
+        .rank-winner { background:#ffe066; padding:3px 10px; border-radius:8px; font-weight:bold; color: #000; }
+        .copy-btn { float: right; padding: 6px 12px; font-size: 12px; background: #6c757d; color: white; border-radius: 6px; border: none; cursor: pointer; }
+        
+        .history-list { font-size: 13px; color: #555; max-height: 250px; overflow-y: auto; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
+        .history-item { margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #ddd; }
+        
+        .sub-guide { font-size: 11px; font-weight: normal; color: #666; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="header">
+        <h2>🎴 고스톱 정산 Master</h2>
+        <button class="help-btn" onclick="openModal()">사용법 📖</button>
+    </div>
+
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <h3>📖 사용 설명서</h3>
+            <p>1. <b>이름 설정</b>: 상단 칸에 이름을 넣으세요.</p>
+            <p>2. <b>승자/점수</b>: 승자를 체크하고 점수를 넣으세요.</p>
+            <p>3. <b>패자 옵션</b>: 박, 고/흔듦, 추가x2 등을 체크하세요.</p>
+            <p>4. <b>휴식</b>: 참여 안 한 사람은 '휴식' 클릭.</p>
+            <p>5. <b>🚨 고박(독박)</b>: 승자는 패자들 점수 합산 입력 후, 고박자 1인만 남기고 나머지는 '휴식' 클릭.</p>
+            
+            <div class="ios-tip">
+                <strong style="color:#007aff;">📱 아이폰(iOS) 어플 설치 방법</strong><br>
+                1. 하단 중앙 <b>[공유 버튼]</b>(정사각형 화살표) 클릭<br>
+                2. 리스트 중 <b>[홈 화면에 추가]</b> 클릭<br>
+                3. 이제 홈 화면에서 어플처럼 실행 가능!
+            </div>
+            
+            <button class="mainBtn addBtn" onclick="closeModal()" style="margin-top:20px;">확인했습니다</button>
+        </div>
+    </div>
+
     <div class="card">
         <div class="name-section">
-            <input class="nameInput" id="name0" value="플레이어1" oninput="syncNames()">
-            <input class="nameInput" id="name1" value="플레이어2" oninput="syncNames()">
-            <input class="nameInput" id="name2" value="플레이어3" oninput="syncNames()">
-            <input class="nameInput" id="name3" value="플레이어4" oninput="syncNames()">
-        </div>
-    </div>
-
-    <div class="card" style="border: 2px solid var(--purple);">
-        <div style="font-weight: bold; font-size: 14px; color: var(--purple); margin-bottom: 8px;">📢 판 시작 전: 광팔기 정산 (1개당 1점)</div>
-        <div class="kwang-box">
-            <select id="kwangPlayer" class="kwang-sel"></select>
-            <select id="kwangCount" class="kwang-sel">
-                <option value="1">광 1개 (1점)</option>
-                <option value="2">광 2개 (2점)</option>
-                <option value="3">광 3개 (3점)</option>
-                <option value="4">광 4개 (4점)</option>
-                <option value="5">광 5개 (5점)</option>
-            </select>
-            <button class="kwang-btn-sm" onclick="addKwangRound()">광값 저장</button>
+            <input class="nameInput" id="name0" value="플레이어1" oninput="syncNames()" onfocus="this.select()">
+            <input class="nameInput" id="name1" value="플레이어2" oninput="syncNames()" onfocus="this.select()">
+            <input class="nameInput" id="name2" value="플레이어3" oninput="syncNames()" onfocus="this.select()">
+            <input class="nameInput" id="name3" value="플레이어4" oninput="syncNames()" onfocus="this.select()">
         </div>
     </div>
 
     <div class="card">
-        <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">📝 판 결과 입력</div>
+        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">
+            📝 판 결과 입력 <span class="sub-guide">(승자 체크 후 점수 입력)</span>
+        </div>
         <div id="playerRows"></div>
         <button class="mainBtn addBtn" onclick="addRound()">이번 판 저장</button>
         <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 취소</button>
     </div>
 
     <div class="card">
-        <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">🏆 누적 정산 현황</div>
+        <button class="copy-btn" onclick="copyResult()">결과 복사</button>
+        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">🏆 누적 정산 현황</div>
         <div id="ranking"></div>
-        <div id="result">내역 없음</div>
-        <div id="history" class="history-list"></div>
+        <div id="result">정산 내역 없음</div>
+        <div style="margin-top: 20px; font-weight: bold; font-size: 14px;">📜 판별 상세 기록</div>
+        <div id="history" class="history-list">기록이 없습니다.</div>
     </div>
 
     <button class="mainBtn resetBtn" onclick="resetGame()">전체 초기화</button>
 </div>
 
 <script>
-    let rounds = [];
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail:', err));
+        });
+    }
+
+    let rounds = []; 
     let winnerIdx = 0;
     let excludes = [false, false, false, false];
 
-    window.onload = () => { buildRows(); loadGame(); syncNames(); };
+    window.onload = () => { buildRows(); loadGame(); };
 
-    function syncNames() {
-        const sel = document.getElementById('kwangPlayer');
-        sel.innerHTML = '';
-        for (let i = 0; i < 4; i++) {
-            const name = document.getElementById(`name${i}`).value || `P${i+1}`;
-            const label = document.getElementById(`label${i}`);
-            if(label) label.innerText = name;
-            sel.innerHTML += `<option value="${i}">${name}</option>`;
-        }
-        render();
-    }
+    function openModal() { document.getElementById('helpModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('helpModal').style.display = 'none'; }
 
     function buildRows() {
         const container = document.getElementById('playerRows');
         container.innerHTML = '';
         for (let i = 0; i < 4; i++) {
             container.innerHTML += `
-                <div class="player-row">
+                <div class="player-row" id="row${i}">
                     <div class="row-main">
                         <input type="radio" name="winGroup" class="role-radio" id="radio${i}" ${i==0?'checked':''} onclick="changeWinner(${i})">
                         <span class="player-name-label" id="label${i}"></span>
-                        <input type="number" id="input${i}" class="score-input" placeholder="0" ${i!==0?'disabled':''}>
+                        <div class="score-input-container">
+                            <input type="number" id="input${i}" class="score-input" placeholder="0" ${i!==0?'disabled':''} onfocus="this.select()">
+                            <span class="win-tag" id="tag${i}">점 승!</span>
+                        </div>
                     </div>
                     <div class="row-options" id="options${i}">
                         <button class="opt-btn exclude-btn" id="ex${i}" onclick="toggleEx(${i})">휴식</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">피박</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">광박</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">멍박</button>
-                        <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">추가x2</button>
+                        <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">고/흔듦</button>
+                        <button class="opt-btn pak-btn multi-btn" onclick="this.classList.toggle('active')">추가x2</button>
                     </div>
                 </div>`;
         }
+        syncNames();
+    }
+
+    function syncNames() {
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`label${i}`).innerText = document.getElementById(`name${i}`).value || `P${i+1}`;
+        }
+        render();
     }
 
     function changeWinner(idx) {
         winnerIdx = idx;
         for (let i = 0; i < 4; i++) {
-            document.getElementById(`input${i}`).disabled = (i !== idx);
-            document.getElementById(`options${i}`).style.opacity = (i === idx) ? '0' : '1';
+            const isWin = (i === idx);
+            document.getElementById(`input${i}`).disabled = !isWin;
+            document.getElementById(`tag${i}`).style.display = isWin ? 'inline' : 'none';
+            document.getElementById(`options${i}`).style.display = isWin ? 'none' : 'flex';
         }
     }
 
     function toggleEx(idx) {
         excludes[idx] = !excludes[idx];
-        document.getElementById(`ex${idx}`).classList.toggle('active');
-    }
-
-    function addKwangRound() {
-        const kIdx = parseInt(document.getElementById('kwangPlayer').value);
-        const kCount = parseInt(document.getElementById('kwangCount').value);
-        // 광 1개당 1점 반영
-        const amount = kCount * 1; 
-        let scores = [-amount, -amount, -amount, -amount];
-        scores[kIdx] = amount * 3;
-
-        rounds.push({
-            type: 'KWANG',
-            scores: scores,
-            desc: `${getName(kIdx)} 광 ${kCount}개 정산 (+${amount * 3})`
+        document.getElementById(`ex${idx}`).classList.toggle('active', excludes[idx]);
+        const otherBtns = document.querySelectorAll(`#options${idx} .pak-btn`);
+        otherBtns.forEach(btn => {
+            btn.disabled = excludes[idx];
+            btn.style.opacity = excludes[idx] ? '0.3' : '1';
+            if(excludes[idx]) btn.classList.remove('active');
         });
-        saveAndRender();
     }
 
     function addRound() {
         const scoreVal = parseInt(document.getElementById(`input${winnerIdx}`).value) || 0;
-        if (scoreVal <= 0) return alert("점수를 입력하세요.");
+        if (scoreVal <= 0) { alert("승리 점수를 입력하세요."); return; }
         
-        let scores = [0, 0, 0, 0];
+        let currentScores = [0, 0, 0, 0];
         let winSum = 0;
-        for (let i = 0; i < 4; i++) {
-            if (i === winnerIdx || excludes[i]) continue;
-            let m = 1;
-            document.querySelectorAll(`#options${i} .pak-btn.active`).forEach(() => m *= 2);
-            let loss = scoreVal * m;
-            scores[i] = -loss;
-            winSum += loss;
-        }
-        scores[winnerIdx] = winSum;
+        let details = [];
 
-        rounds.push({
-            type: 'GAME',
-            scores: scores,
-            desc: `${getName(winnerIdx)} ${scoreVal}점 승 (+${winSum})`
+        for (let i = 0; i < 4; i++) {
+            if (i === winnerIdx) continue;
+            const name = document.getElementById(`name${i}`).value || `P${i+1}`;
+            if (excludes[i]) {
+                details.push(`${name}(휴식)`);
+            } else {
+                let m = 1;
+                let pakNames = [];
+                document.querySelectorAll(`#options${i} .pak-btn.active`).forEach(btn => { 
+                    m *= 2; 
+                    pakNames.push(btn.innerText);
+                });
+                let loss = scoreVal * m;
+                currentScores[i] = -loss;
+                winSum += loss;
+                details.push(`${name}${pakNames.length?`(${pakNames.join(',')})`:''}: -${loss}`);
+            }
+        }
+        currentScores[winnerIdx] = winSum;
+
+        rounds.push({ 
+            scores: currentScores, 
+            winner: winnerIdx, 
+            winnerName: document.getElementById(`name${winnerIdx}`).value || `P${winnerIdx+1}`,
+            winScore: scoreVal,
+            details: details.join(", ")
         });
         
         document.getElementById(`input${winnerIdx}`).value = '';
-        excludes = [false, false, false, false];
-        document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
-        saveAndRender();
-    }
-
-    function getName(i) { return document.getElementById(`name${i}`).value || `P${i+1}`; }
-
-    function saveAndRender() {
-        localStorage.setItem("gostop_vStep_Final", JSON.stringify(rounds));
+        resetUI();
+        saveGame();
         render();
     }
 
+    function resetUI() {
+        excludes = [false, false, false, false];
+        document.querySelectorAll('.opt-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        });
+        changeWinner(winnerIdx);
+    }
+
     function render() {
+        let names = [0,1,2,3].map(i => document.getElementById(`name${i}`).value || `P${i+1}`);
         let totals = [0,0,0,0];
+        let matrix = Array.from(Array(4), () => Array(4).fill(0));
         let historyHtml = "";
+
         rounds.forEach((r, idx) => {
-            r.scores.forEach((s, i) => totals[i] += s);
-            historyHtml = `<div class="history-item"><b>${r.type==='KWANG'?'[광]':'['+(idx+1)+']'}</b> ${r.desc}</div>` + historyHtml;
+            r.scores.forEach((s, i) => {
+                totals[i] += s;
+                if (s < 0) matrix[i][r.winner] += Math.abs(s);
+            });
+            historyHtml = `<div class="history-item"><b>[${idx+1}판]</b> ${r.winnerName} +${r.winScore}점 승<br><small>${r.details}</small></div>` + historyHtml;
         });
 
-        document.getElementById('ranking').innerHTML = [0,1,2,3].map(i => `${getName(i)}: <b>${totals[i].toLocaleString()}</b>`).join(' | ');
-        document.getElementById('history').innerHTML = historyHtml;
+        document.getElementById('history').innerHTML = historyHtml || "기록 없음";
+
+        let sorted = names.map((n, i) => ({ n, s: totals[i] })).sort((a,b) => b.s - a.s);
+        document.getElementById('ranking').innerHTML = sorted.map((p, i) => 
+            `${i+1}위: <span class="${i==0 && p.s>0?'rank-winner':''}">${p.n} (${p.s.toLocaleString()})</span>`
+        ).join('<br>');
 
         let final = [];
-        let t = [...totals];
-        for(let i=0; i<4; i++){
-            if(t[i]>=0) continue;
-            for(let j=0; j<4; j++){
-                if(t[j]<=0) continue;
-                let move = Math.min(Math.abs(t[i]), t[j]);
-                if(move>0){
-                    final.push(`${getName(i)} ⮕ ${getName(j)} : ${move.toLocaleString()}점`);
-                    t[i]+=move; t[j]-=move;
-                }
+        for (let i = 0; i < 4; i++) {
+            for (let j = i + 1; j < 4; j++) {
+                let net = matrix[i][j] - matrix[j][i];
+                if (net > 0) final.push(`${names[i]} ⮕ ${names[j]} : ${net.toLocaleString()}점`);
+                else if (net < 0) final.push(`${names[j]} ⮕ ${names[i]} : ${Math.abs(net).toLocaleString()}점`);
             }
         }
         document.getElementById('result').innerHTML = final.join('<br>') || "정산 내역 없음";
     }
 
-    function undoLast() { if(confirm("취소할까요?")) { rounds.pop(); saveAndRender(); } }
-    function resetGame() { if(confirm("초기화할까요?")) { localStorage.clear(); location.reload(); } }
+    function saveGame() { localStorage.setItem("gostop_vFinal_checked", JSON.stringify(rounds)); }
     function loadGame() {
-        const data = localStorage.getItem("gostop_vStep_Final");
+        const data = localStorage.getItem("gostop_vFinal_checked");
         if(data) { rounds = JSON.parse(data); render(); }
+    }
+    function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
+    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.clear(); location.reload(); } }
+    function copyResult() {
+        const res = document.getElementById('result').innerText;
+        const hist = document.getElementById('history').innerText;
+        navigator.clipboard.writeText("💰 고스톱 정산 최종 💰\n" + res + "\n\n📜 상세 기록\n" + hist).then(() => alert("복사 완료!"));
     }
 </script>
 </body>
