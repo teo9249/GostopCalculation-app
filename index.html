@@ -1,313 +1,325 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>고스톱 정산기</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고스톱 정산기 Pro</title>
 
-<style>
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg,#1e3c72,#2a5298);
-    margin:0;
-    padding:20px;
-    color:white;
-}
+    <style>
+        body {
+            font-family: 'Segoe UI', Apple SD Gothic Neo, sans-serif;
+            background: linear-gradient(135deg,#1e3c72,#2a5298);
+            margin:0;
+            padding:20px;
+            color:white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.card {
-    background:white;
-    color:#333;
-    padding:15px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
+        .container { width: 100%; max-width: 500px; }
 
-h2 { text-align:center; }
+        .card {
+            background:white;
+            color:#333;
+            padding:18px;
+            border-radius:15px;
+            margin-bottom:20px;
+            box-shadow:0 8px 20px rgba(0,0,0,0.3);
+        }
 
-details summary { font-weight:bold; cursor:pointer; }
+        h2 { text-align:center; margin-top: 0; }
 
-.nameInput {
-    width:70px;
-    padding:5px;
-    margin:5px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    text-align:center;
-}
+        .nameInput {
+            width: 20%;
+            padding:8px;
+            margin:2px;
+            border-radius:8px;
+            border:1px solid #ddd;
+            text-align:center;
+            font-weight: bold;
+        }
 
-.scoreRow {
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
-}
+        .scoreRow {
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom:12px;
+        }
 
-.scoreRow input {
-    width:70px;
-    padding:8px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    text-align:center;
-}
+        .scoreRow label { font-weight: bold; width: 60px; }
 
-.minusBtn {
-    background:#ff4d4d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    padding:8px 12px;
-    font-weight:bold;
-}
+        .scoreRow input {
+            flex: 1;
+            padding:10px;
+            margin: 0 10px;
+            border-radius:8px;
+            border:1px solid #ccc;
+            text-align:center;
+            font-size: 16px;
+        }
 
-.mainBtn {
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-    font-weight:bold;
-}
+        .minusBtn {
+            background:#ff4d4d;
+            color:white;
+            border:none;
+            border-radius:8px;
+            padding:10px 15px;
+            font-weight:bold;
+            cursor: pointer;
+        }
 
-.addBtn { background:#28a745; color:white; }
-.undoBtn { background:#ffc107; }
-.resetBtn { background:#dc3545; color:white; }
+        .mainBtn {
+            width:100%;
+            padding:14px;
+            margin-top:10px;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-#result { white-space:pre-line; font-weight:bold; }
-#history { white-space:pre-line; max-height:200px; overflow-y:auto; font-size:14px; }
+        .addBtn { background:#28a745; color:white; }
+        .addBtn:active { background:#218838; }
+        .undoBtn { background:#ffc107; margin-top: 15px; }
+        .resetBtn { background:#dc3545; color:white; }
 
-.winner {
-    background:#ffe066;
-    padding:3px 6px;
-    border-radius:6px;
-    font-weight:bold;
-}
+        #result { 
+            white-space:pre-line; 
+            font-weight:bold; 
+            color: #2a5298; 
+            line-height: 1.8;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
 
+        #ranking { line-height: 1.6; margin-bottom: 10px; }
 
+        #history { 
+            white-space:pre-line; 
+            max-height:150px; 
+            overflow-y:auto; 
+            font-size:13px; 
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            color: #666;
+        }
 
-</style>
+        .winner {
+            background:#ffe066;
+            padding:2px 5px;
+            border-radius:4px;
+            font-weight:bold;
+        }
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1e3c72">
+        .copyBtn {
+            background: #6c757d;
+            color: white;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            float: right;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
 
-<h2>🎴 고스톱 정산기</h2>
+<div class="container">
+    <h2>🎴 고스톱 정산기 Pro</h2>
 
-<div class="card">
-<details>
-<summary>📖 사용법 보기</summary>
-<div>
-승자는 가져갈 총점수 입력<br>
-패자는 잃은 점수 입력 후 "-" 버튼 클릭<br>
-한 판 합계는 반드시 0이 되어야 합니다
-</div>
-</details>
-</div>
+    <div class="card">
+        <b>👤 플레이어 이름</b><br><br>
+        <input class="nameInput" id="nameA" value="A" oninput="calculate()">
+        <input class="nameInput" id="nameB" value="B" oninput="calculate()">
+        <input class="nameInput" id="nameC" value="C" oninput="calculate()">
+        <input class="nameInput" id="nameD" value="D" oninput="calculate()">
+    </div>
 
-<div class="card">
-<b>이름 설정</b><br>
-<input class="nameInput" id="nameA" placeholder="A">
-<input class="nameInput" id="nameB" placeholder="B">
-<input class="nameInput" id="nameC" placeholder="C">
-<input class="nameInput" id="nameD" placeholder="D">
-</div>
+    <div class="card">
+        <b>📝 이번 판 점수 입력</b><br><br>
+        <div class="scoreRow">
+            <label id="lblA">A</label>
+            <input type="number" id="scoreA" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreA')">+/-</button>
+        </div>
+        <div class="scoreRow">
+            <label id="lblB">B</label>
+            <input type="number" id="scoreB" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreB')">+/-</button>
+        </div>
+        <div class="scoreRow">
+            <label id="lblC">C</label>
+            <input type="number" id="scoreC" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreC')">+/-</button>
+        </div>
+        <div class="scoreRow">
+            <label id="lblD">D</label>
+            <input type="number" id="scoreD" placeholder="0" onfocus="this.select()">
+            <button class="minusBtn" onclick="addMinus('scoreD')">+/-</button>
+        </div>
+        <button class="mainBtn addBtn" onclick="addRound()">판 추가 (기록)</button>
+        <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 판 취소</button>
+    </div>
 
-<div class="card">
-<b>점수 입력</b>
+    <div class="card">
+        <b>🏆 누적 순위</b>
+        <div id="ranking"></div>
+        
+        <b>💰 모든 쌍(Pair) 정산 결과</b>
+        <button class="copyBtn" onclick="copyResult()">결과 복사</button>
+        <div id="result">정산 내역 없음</div>
+    </div>
 
-<div class="scoreRow">
-<input type="number" id="scoreA">
-<button class="minusBtn" onclick="addMinus('scoreA')">-</button>
-</div>
+    <div class="card">
+        <b>📜 판별 기록</b>
+        <div id="history"></div>
+    </div>
 
-<div class="scoreRow">
-<input type="number" id="scoreB">
-<button class="minusBtn" onclick="addMinus('scoreB')">-</button>
-</div>
-
-<div class="scoreRow">
-<input type="number" id="scoreC">
-<button class="minusBtn" onclick="addMinus('scoreC')">-</button>
-</div>
-
-<div class="scoreRow">
-<input type="number" id="scoreD">
-<button class="minusBtn" onclick="addMinus('scoreD')">-</button>
-</div>
-
-<button class="mainBtn addBtn" onclick="addRound()">판 추가</button>
-<button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 판 되돌리기</button>
-</div>
-
-<div class="card">
-<b>🏆 현재 순위</b>
-<div id="ranking"></div>
-</div>
-
-<div class="card">
-<b>💰 정산 결과</b>
-<div id="result">정산 결과 없음</div>
-</div>
-
-<div class="card">
-<b>📜 판 기록</b>
-<div id="history"></div>
-</div>
-
-<div class="card">
-<button class="mainBtn resetBtn" onclick="resetGame()">
-전체 초기화
-</button>
+    <button class="mainBtn resetBtn" onclick="resetGame()">전체 데이터 초기화</button>
 </div>
 
 <script>
-let total=[0,0,0,0];
-let rounds=[];
-let holdTimer=null;
+    let total = [0, 0, 0, 0];
+    let rounds = [];
 
-window.onload=loadGame;
+    window.onload = loadGame;
 
-function saveGame(){
-localStorage.setItem("gostopData",JSON.stringify({total,rounds}));
-}
+    function saveGame() {
+        localStorage.setItem("gostopData_v2", JSON.stringify({ total, rounds }));
+    }
 
-function loadGame(){
-let data=localStorage.getItem("gostopData");
-if(data){
-let obj=JSON.parse(data);
-total=obj.total||[0,0,0,0];
-rounds=obj.rounds||[];
-rebuildHistory();
-calculate();
-}
-}
+    function loadGame() {
+        let data = localStorage.getItem("gostopData_v2");
+        if (data) {
+            let obj = JSON.parse(data);
+            total = obj.total || [0, 0, 0, 0];
+            rounds = obj.rounds || [];
+            rebuildHistory();
+            calculate();
+        }
+    }
 
-function addMinus(id){
-let input=document.getElementById(id);
-if(input.value.startsWith("-")){
-input.value=input.value.substring(1);
-}else{
-input.value="-"+input.value;
-}
-}
+    function addMinus(id) {
+        let input = document.getElementById(id);
+        if (input.value.startsWith("-")) {
+            input.value = input.value.substring(1);
+        } else if (input.value !== "") {
+            input.value = "-" + input.value;
+        } else {
+            input.value = "-";
+        }
+    }
 
-function getNames(){
-return [
-document.getElementById("nameA").value||"A",
-document.getElementById("nameB").value||"B",
-document.getElementById("nameC").value||"C",
-document.getElementById("nameD").value||"D"
-];
-}
+    function getNames() {
+        const names = [
+            document.getElementById("nameA").value || "A",
+            document.getElementById("nameB").value || "B",
+            document.getElementById("nameC").value || "C",
+            document.getElementById("nameD").value || "D"
+        ];
+        // 입력 UI 라벨 동기화
+        document.getElementById("lblA").innerText = names[0];
+        document.getElementById("lblB").innerText = names[1];
+        document.getElementById("lblC").innerText = names[2];
+        document.getElementById("lblD").innerText = names[3];
+        return names;
+    }
 
-function addRound(){
-let s=[
-parseInt(document.getElementById("scoreA").value)||0,
-parseInt(document.getElementById("scoreB").value)||0,
-parseInt(document.getElementById("scoreC").value)||0,
-parseInt(document.getElementById("scoreD").value)||0
-];
+    function addRound() {
+        let s = [
+            parseInt(document.getElementById("scoreA").value) || 0,
+            parseInt(document.getElementById("scoreB").value) || 0,
+            parseInt(document.getElementById("scoreC").value) || 0,
+            parseInt(document.getElementById("scoreD").value) || 0
+        ];
 
-let sum=s.reduce((a,b)=>a+b,0);
-if(sum!==0){alert("⚠ 합계가 0이 아닙니다");return;}
+        // 합계가 0이 아니어도 진행 가능하도록 수정됨
+        for (let i = 0; i < 4; i++) { total[i] += s[i]; }
+        rounds.push(s);
 
-for(let i=0;i<4;i++){total[i]+=s[i];}
-rounds.push(s);
+        // 입력칸 초기화
+        ["scoreA", "scoreB", "scoreC", "scoreD"].forEach(id => document.getElementById(id).value = "");
 
-document.getElementById("scoreA").value="";
-document.getElementById("scoreB").value="";
-document.getElementById("scoreC").value="";
-document.getElementById("scoreD").value="";
+        rebuildHistory();
+        calculate();
+        saveGame();
+    }
 
-rebuildHistory();
-calculate();
-saveGame();
-}
+    function undoLast() {
+        if (rounds.length === 0) return;
+        if (!confirm("마지막 판 기록을 삭제할까요?")) return;
+        let last = rounds.pop();
+        for (let i = 0; i < 4; i++) { total[i] -= last[i]; }
+        rebuildHistory();
+        calculate();
+        saveGame();
+    }
 
-function undoLast(){
-if(rounds.length===0)return;
-let last=rounds.pop();
-for(let i=0;i<4;i++){total[i]-=last[i];}
-rebuildHistory();
-calculate();
-saveGame();
-}
+    function rebuildHistory() {
+        let names = getNames();
+        let text = "";
+        rounds.forEach((r, i) => {
+            text += `[${i + 1}판] ${names[0]}:${r[0]} | ${names[1]}:${r[1]} | ${names[2]}:${r[2]} | ${names[3]}:${r[3]}\n`;
+        });
+        document.getElementById("history").innerText = text || "기록 없음";
+    }
 
-function rebuildHistory(){
-let names=getNames();
-let text="";
-let historyDiv=document.getElementById("history");
+    function calculate() {
+        let names = getNames();
+        const n = names.length;
 
-rounds.forEach((r,i)=>{
-text+=`판 ${i+1}
-${names[0]}(${r[0]})  ${names[1]}(${r[1]})
-${names[2]}(${r[2]})  ${names[3]}(${r[3]})
+        // 1. 순위 표시
+        let players = names.map((n, i) => ({ name: n, score: total[i] }));
+        let sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
-`;
-});
+        let rankText = "";
+        sortedPlayers.forEach((p, i) => {
+            const isWinner = i === 0 && p.score > sortedPlayers[1]?.score;
+            rankText += `${i+1}등: <span class="${isWinner ? 'winner' : ''}">${p.name} (${p.score})</span><br>`;
+        });
+        document.getElementById("ranking").innerHTML = rankText;
 
-historyDiv.innerText=text;
-}
+        // 2. 모든 쌍(Pair) 정산 (상대적 차이 계산)
+        let finalSettlements = [];
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                let diff = total[i] - total[j];
+                if (diff > 0) {
+                    // i가 j보다 점수가 높으므로 j가 i에게 준다
+                    finalSettlements.push(`${names[j]} ⮕ ${names[i]} : ${diff.toLocaleString()}점`);
+                } else if (diff < 0) {
+                    // j가 i보다 점수가 높으므로 i가 j에게 준다
+                    finalSettlements.push(`${names[i]} ⮕ ${names[j]} : ${Math.abs(diff).toLocaleString()}점`);
+                }
+            }
+        }
 
-function calculate(){
-let names=getNames();
-let rankingDiv=document.getElementById("ranking");
+        document.getElementById("result").innerHTML = finalSettlements.join("<br>") || "정산 내역 없음";
+    }
 
-let players=names.map((n,i)=>({name:n,score:total[i]}));
-players.sort((a,b)=>b.score-a.score);
+    function copyResult() {
+        const text = document.getElementById("result").innerText;
+        navigator.clipboard.writeText("💰 고스톱 정산 결과 💰\n\n" + text)
+            .then(() => alert("정산 결과가 클립보드에 복사되었습니다."));
+    }
 
-let rankText="";
-players.forEach((p,i)=>{
-if(i===0 && p.score>0){
-rankText+=`🥇 <span class="winner">${p.name} (${p.score})</span><br>`;
-}else{
-rankText+=`${p.name} (${p.score})<br>`;
-}
-});
-rankingDiv.innerHTML=rankText;
-
-let receivers=players.filter(p=>p.score>0);
-let payers=players.filter(p=>p.score<0);
-
-let resultText="";
-receivers.forEach(r=>{
-let need=r.score;
-payers.forEach(p=>{
-let debt=Math.abs(p.score);
-if(debt>0&&need>0){
-let pay=Math.min(need,debt);
-resultText+=`${p.name}가 ${r.name}에게 ${pay}점 지급\n`;
-p.score+=pay;
-need-=pay;
-}
-});
-});
-
-document.getElementById("result").innerText=resultText||"정산 결과 없음";
-}
-
-function resetGame(){
-let confirmReset = confirm("정말 전체 초기화 하시겠습니까?");
-
-if(confirmReset){
-    localStorage.removeItem("gostopData");
-    total=[0,0,0,0];
-    rounds=[];
-    
-    document.getElementById("history").innerText="";
-    document.getElementById("result").innerText="정산 결과 없음";
-    document.getElementById("ranking").innerHTML="";
-    
-    alert("초기화 완료");
-}
-}
+    function resetGame() {
+        if (confirm("모든 데이터를 삭제하고 초기화할까요?")) {
+            localStorage.removeItem("gostopData_v2");
+            total = [0, 0, 0, 0];
+            rounds = [];
+            rebuildHistory();
+            calculate();
+            alert("초기화 완료");
+        }
+    }
 </script>
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
+
 </body>
 </html>
