@@ -157,12 +157,8 @@ details summary { font-weight:bold; cursor:pointer; }
 </div>
 
 <div class="card">
-<button class="mainBtn resetBtn"
-onmousedown="startHold()" 
-onmouseup="cancelHold()" 
-ontouchstart="startHold()" 
-ontouchend="cancelHold()">
-3초 길게 눌러 전체 초기화
+<button class="mainBtn resetBtn" onclick="resetGame()">
+전체 초기화
 </button>
 </div>
 
@@ -292,20 +288,20 @@ need-=pay;
 document.getElementById("result").innerText=resultText||"정산 결과 없음";
 }
 
-function startHold(){
-holdTimer=setTimeout(()=>{
-localStorage.removeItem("gostopData");
-total=[0,0,0,0];
-rounds=[];
-document.getElementById("history").innerText="";
-document.getElementById("result").innerText="정산 결과 없음";
-document.getElementById("ranking").innerHTML="";
-alert("초기화 완료");
-},3000);
-}
+function resetGame(){
+let confirmReset = confirm("정말 전체 초기화 하시겠습니까?");
 
-function cancelHold(){
-clearTimeout(holdTimer);
+if(confirmReset){
+    localStorage.removeItem("gostopData");
+    total=[0,0,0,0];
+    rounds=[];
+    
+    document.getElementById("history").innerText="";
+    document.getElementById("result").innerText="정산 결과 없음";
+    document.getElementById("ranking").innerHTML="";
+    
+    alert("초기화 완료");
+}
 }
 </script>
 <script>
@@ -315,3 +311,4 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+
