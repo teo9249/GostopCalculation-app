@@ -10,41 +10,29 @@
         .container { width: 100%; max-width: 500px; }
         .card { background:white; color:#333; padding:15px; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
         h2 { text-align: center; margin: 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        
-        /* 이름 설정 영역 */
         .name-section { display: flex; justify-content: space-between; gap: 5px; }
         .nameInput { width: 22%; padding:8px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; font-size: 14px; }
-        
-        /* 판 결과 입력 영역 */
-        .player-row { border-bottom: 1px solid #eee; padding: 12px 0; transition: 0.3s; }
+        .player-row { border-bottom: 1px solid #eee; padding: 12px 0; }
         .player-row:last-child { border: none; }
         .row-main { display: flex; align-items: center; gap: 10px; }
         .role-radio { transform: scale(1.3); cursor: pointer; }
         .player-name-label { width: 75px; font-weight: bold; font-size: 15px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
         .score-input-container { flex: 1; display: flex; align-items: center; gap: 8px; }
         .score-input { width: 100%; max-width: 100px; padding: 10px; border-radius: 8px; border: 2px solid var(--accent); text-align: center; font-size: 18px; font-weight: bold; outline: none; }
         .score-input:disabled { border-color: #eee; background: #f9f9f9; opacity: 0; pointer-events: none; }
         .win-tag { font-weight: bold; color: var(--accent); font-size: 14px; display: none; }
-
-        /* 패자 옵션 버튼 */
         .row-options { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 30px; margin-top: 8px; }
         .opt-btn { font-size: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; box-shadow: 0 2px 5px rgba(255,77,77,0.4); }
         .opt-btn.exclude-btn { border-color: #6c757d; color: #6c757d; }
         .opt-btn.exclude-btn.active { background: #6c757d; color: white; }
-
-        /* 하단 버튼 및 결과 */
         .mainBtn { width:100%; padding:15px; margin-top:10px; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .addBtn { background: var(--accent); color:white; }
-        .addBtn:active { transform: scale(0.98); }
         .undoBtn { background: var(--warning); color: #333; margin-top: 10px; }
         .resetBtn { background: var(--danger); color:white; margin-top: 25px; font-size: 14px; opacity: 0.9; }
-        
         #result { white-space:pre-line; font-weight:bold; color: var(--secondary); line-height: 1.6; border-top: 1px solid #eee; padding-top: 12px; font-size: 16px; }
         #ranking { line-height: 1.8; margin-bottom: 12px; font-size: 15px; }
-        .rank-winner { background:#ffe066; padding:2px 8px; border-radius:6px; font-weight:bold; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        
+        .rank-winner { background:#ffe066; padding:2px 8px; border-radius:6px; font-weight:bold; color: #000; }
         .copy-btn { float: right; padding: 4px 8px; font-size: 11px; background: #6c757d; color: white; border-radius: 4px; border: none; cursor: pointer; }
     </style>
 </head>
@@ -54,7 +42,7 @@
     <h2>🎴 스마트 고스톱 정산 Pro</h2>
 
     <div class="card">
-        <div style="margin-bottom: 8px; font-weight: bold; font-size: 14px;">👤 플레이어 이름 설정</div>
+        <div style="margin-bottom: 8px; font-weight: bold; font-size: 14px;">👤 이름 설정</div>
         <div class="name-section">
             <input class="nameInput" id="name0" value="플레이어1" oninput="syncNames()">
             <input class="nameInput" id="name1" value="플레이어2" oninput="syncNames()">
@@ -64,20 +52,20 @@
     </div>
 
     <div class="card">
-        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">📝 판 결과 입력 (승자만 점수 입력)</div>
+        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">📝 판 결과 (승자 점수 입력)</div>
         <div id="playerRows"></div>
-        <button class="mainBtn addBtn" onclick="addRound()">이번 판 결과 저장</button>
-        <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 기록 취소</button>
+        <button class="mainBtn addBtn" onclick="addRound()">결과 저장</button>
+        <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 취소</button>
     </div>
 
     <div class="card">
         <button class="copy-btn" onclick="copyResult()">결과 복사</button>
-        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">🏆 현재 누적 현황</div>
+        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">🏆 누적 현황 및 정산</div>
         <div id="ranking"></div>
-        <div id="result">정산 내역이 없습니다.</div>
+        <div id="result">정산 내역 없음</div>
     </div>
 
-    <button class="mainBtn resetBtn" onclick="resetGame()">전체 데이터 초기화</button>
+    <button class="mainBtn resetBtn" onclick="resetGame()">전체 초기화</button>
 </div>
 
 <script>
@@ -85,12 +73,8 @@
     let winnerIdx = 0;
     let excludes = [false, false, false, false];
 
-    window.onload = () => {
-        buildRows();
-        loadGame();
-    };
+    window.onload = () => { buildRows(); loadGame(); };
 
-    // 1. 행 생성 (플레이어별 입력창)
     function buildRows() {
         const container = document.getElementById('playerRows');
         container.innerHTML = '';
@@ -117,16 +101,13 @@
         syncNames();
     }
 
-    // 2. 이름 실시간 동기화
     function syncNames() {
         for (let i = 0; i < 4; i++) {
-            const nameValue = document.getElementById(`name${i}`).value || `P${i+1}`;
-            document.getElementById(`label${i}`).innerText = nameValue;
+            document.getElementById(`label${i}`).innerText = document.getElementById(`name${i}`).value || `P${i+1}`;
         }
         changeWinner(winnerIdx); 
     }
 
-    // 3. 승자 변경 시 UI 처리
     function changeWinner(idx) {
         winnerIdx = idx;
         for (let i = 0; i < 4; i++) {
@@ -138,12 +119,9 @@
         }
     }
 
-    // 4. 광(휴식) 토글
     function toggleEx(idx) {
         excludes[idx] = !excludes[idx];
-        const exBtn = document.getElementById(`ex${idx}`);
-        exBtn.classList.toggle('active', excludes[idx]);
-        
+        document.getElementById(`ex${idx}`).classList.toggle('active', excludes[idx]);
         const otherBtns = document.querySelectorAll(`#options${idx} .pak-btn`);
         otherBtns.forEach(btn => {
             btn.disabled = excludes[idx];
@@ -152,31 +130,26 @@
         });
     }
 
-    // 5. 판 추가 (정산 로직)
     function addRound() {
         const scoreVal = parseInt(document.getElementById(`input${winnerIdx}`).value) || 0;
-        if (scoreVal <= 0) { alert("승리 점수를 입력해 주세요."); return; }
+        if (scoreVal <= 0) { alert("승리 점수를 입력하세요."); return; }
 
         let currentScores = [0, 0, 0, 0];
         let winSum = 0;
 
         for (let i = 0; i < 4; i++) {
-            if (i === winnerIdx || excludes[i]) {
-                currentScores[i] = 0;
-            } else {
+            if (i === winnerIdx || excludes[i]) { currentScores[i] = 0; }
+            else {
                 let m = 1;
-                const actives = document.querySelectorAll(`#options${i} .pak-btn.active`);
-                actives.forEach(() => { m *= 2; });
-                
+                document.querySelectorAll(`#options${i} .pak-btn.active`).forEach(() => { m *= 2; });
                 currentScores[i] = -(scoreVal * m);
                 winSum += Math.abs(currentScores[i]);
             }
         }
         currentScores[winnerIdx] = winSum;
-
-        rounds.push({ scores: currentScores, excluded: [...excludes] });
+        rounds.push({ scores: currentScores, winner: winnerIdx, excluded: [...excludes] });
         
-        // 입력 필드 초기화
+        // 초기화
         document.getElementById(`input${winnerIdx}`).value = '';
         document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('active'));
         excludes = [false, false, false, false];
@@ -186,22 +159,17 @@
         changeWinner(winnerIdx);
     }
 
-    // 6. 계산 및 렌더링
     function render() {
         let names = [0,1,2,3].map(i => document.getElementById(`name${i}`).value || `P${i+1}`);
         let totals = [0,0,0,0];
-        let debts = Array.from(Array(4), () => Array(4).fill(0));
+        let settlementMatrix = Array.from(Array(4), () => Array(4).fill(0));
 
         rounds.forEach(r => {
             r.scores.forEach((s, i) => totals[i] += s);
-            for (let i=0; i<4; i++) {
-                for (let j=i+1; j<4; j++) {
-                    if (r.excluded[i] || r.excluded[j]) continue;
-                    let diff = r.scores[i] - r.scores[j];
-                    if (diff > 0) debts[j][i] += diff;
-                    else if (diff < 0) debts[i][j] += Math.abs(diff);
-                }
-            }
+            // 승자 중심 정산: 패자가 승자에게 줄 돈만 누적
+            r.scores.forEach((s, payerIdx) => {
+                if (s < 0) settlementMatrix[payerIdx][r.winner] += Math.abs(s);
+            });
         });
 
         // 순위 출력
@@ -210,31 +178,30 @@
             `${i+1}위: <span class="${i==0 && p.s>0 ? 'rank-winner' : ''}">${p.n} (${p.s.toLocaleString()})</span>`
         ).join('<br>');
 
-        // 정산 쌍 출력
-        let settlement = [];
-        for (let i=0; i<4; i++) {
-            for (let j=i+1; j<4; j++) {
-                let net = debts[i][j] - debts[j][i];
-                if (net > 0) settlement.push(`${names[i]} ⮕ ${names[j]} : ${net.toLocaleString()}점`);
-                else if (net < 0) settlement.push(`${names[j]} ⮕ ${names[i]} : ${Math.abs(net).toLocaleString()}점`);
+        // 상계 처리 (서로 주고받을 돈 계산)
+        let finalSettlement = [];
+        let tempMatrix = settlementMatrix.map(row => [...row]);
+        for (let i = 0; i < 4; i++) {
+            for (let j = i + 1; j < 4; j++) {
+                let diff = tempMatrix[i][j] - tempMatrix[j][i];
+                if (diff > 0) finalSettlement.push(`${names[i]} ⮕ ${names[j]} : ${diff.toLocaleString()}점`);
+                else if (diff < 0) finalSettlement.push(`${names[j]} ⮕ ${names[i]} : ${Math.abs(diff).toLocaleString()}점`);
             }
         }
-        document.getElementById('result').innerHTML = settlement.join('<br>') || "정산 내역이 없습니다.";
+        document.getElementById('result').innerHTML = finalSettlement.join('<br>') || "정산 내역 없음";
     }
 
-    // 저장 및 보조 기능
-    function saveGame() { localStorage.setItem("gostop_pro_final", JSON.stringify(rounds)); }
+    function saveGame() { localStorage.setItem("gostop_vFinal", JSON.stringify(rounds)); }
     function loadGame() {
-        const data = localStorage.getItem("gostop_pro_final");
+        const data = localStorage.getItem("gostop_vFinal");
         if(data) { rounds = JSON.parse(data); render(); }
     }
-    function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
-    function resetGame() { if(confirm("모든 데이터를 초기화하시겠습니까?")) { localStorage.removeItem("gostop_pro_final"); location.reload(); } }
+    function undoLast() { if(confirm("취소하시겠습니까?")) { rounds.pop(); saveGame(); render(); } }
+    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.removeItem("gostop_vFinal"); location.reload(); } }
     function copyResult() {
         const text = document.getElementById('result').innerText;
         navigator.clipboard.writeText("💰 고스톱 정산 결과 💰\n" + text).then(() => alert("복사되었습니다!"));
     }
 </script>
-
 </body>
 </html>
