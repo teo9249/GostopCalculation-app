@@ -3,16 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고스톱 정산기 Smart Master Pro v4</title>
+    <title>고스톱 정산기 Smart Master Pro</title>
     <style>
-        :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; --gobak: #8b0000; }
+        :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; }
         body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--primary), var(--secondary)); margin:0; padding:10px; color:white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 500px; }
+        
+        /* 타이틀 및 설명서 버튼 */
+        .header { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0; }
+        h2 { margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .help-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .help-btn:hover { background: white; color: var(--primary); }
+
         .card { background:white; color:#333; padding:15px; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
-        h2 { text-align: center; margin: 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
         .name-section { display: flex; justify-content: space-between; gap: 5px; }
         .nameInput { width: 22%; padding:8px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; font-size: 14px; outline: none; }
         .nameInput:focus { border-color: var(--secondary); background: #f0f7ff; }
+        
+        /* 설명서 모달 스타일 */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; color: #333; padding: 20px; border-radius: 15px; max-width: 450px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal-header { font-weight: bold; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: flex; justify-content: space-between; }
+        .close-modal { cursor: pointer; font-size: 20px; }
+        .help-item { margin-bottom: 12px; font-size: 14px; line-height: 1.5; }
+        .help-item b { color: var(--primary); }
+
+        /* 기존 스타일 유지 */
         .player-row { border-bottom: 1px solid #eee; padding: 12px 0; }
         .player-row:last-child { border: none; }
         .row-main { display: flex; align-items: center; gap: 10px; }
@@ -25,7 +41,6 @@
         .row-options { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 30px; margin-top: 8px; }
         .opt-btn { font-size: 11px; padding: 6px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; transition: 0.1s; }
         .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; box-shadow: 0 2px 5px rgba(255,77,77,0.4); }
-        .opt-btn.gobak-btn.active { background: var(--gobak); border-color: var(--gobak); }
         .opt-btn.multi-btn { background: #f0f0f0; border-color: #bbb; color: #333; }
         .opt-btn.multi-btn.active { background: #6610f2; color: white; border-color: #6610f2; }
         .opt-btn.exclude-btn { border-color: #6c757d; color: #6c757d; }
@@ -46,9 +61,29 @@
 <body>
 
 <div class="container">
-    <h2>🎴 스마트 고스톱 정산 Master v4</h2>
+    <div class="header">
+        <h2>🎴 고스톱 정산 Master</h2>
+        <button class="help-btn" onclick="openModal()">사용법 📖</button>
+    </div>
+
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>📖 사용 설명서</span>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="help-item"><b>1. 이름 설정:</b> 상단 플레이어 칸을 클릭해 이름을 입력하세요. (클릭 시 자동 전체선택)</div>
+            <div class="help-item"><b>2. 승자 선택:</b> 이긴 사람 왼쪽의 라디오 버튼을 체크하세요.</div>
+            <div class="help-item"><b>3. 점수 입력:</b> 승자의 점수를 입력하세요. (7점 등)</div>
+            <div class="help-item"><b>4. 패자 옵션:</b> 피박, 광박 등 해당되는 항목을 체크하세요. <b>[추가x2]</b>는 누를 때마다 배수가 중첩됩니다.</div>
+            <div class="help-item"><b>5. 휴식:</b> 광 팔고 죽은 패자는 [휴식]을 누르세요.</div>
+            <div class="help-item"><b>6. 고박(독박) 처리:</b> 고박 쓴 사람 1명만 남기고 나머지 패자는 모두 <b>[휴식]</b>을 체크하면 됩니다.</div>
+            <div class="help-item"><b>7. 정산 확인:</b> 게임 종료 후 하단 <b>정산 내역</b>을 보고 송금하면 끝!</div>
+            <button class="mainBtn addBtn" style="background:var(--secondary)" onclick="closeModal()">확인했습니다</button>
+        </div>
+    </div>
+
     <div class="card">
-        <div style="margin-bottom: 8px; font-weight: bold; font-size: 14px;">👤 이름 설정 (클릭 시 자동 선택)</div>
         <div class="name-section">
             <input class="nameInput" id="name0" value="플레이어1" oninput="syncNames()" onfocus="this.select()">
             <input class="nameInput" id="name1" value="플레이어2" oninput="syncNames()" onfocus="this.select()">
@@ -56,12 +91,14 @@
             <input class="nameInput" id="name3" value="플레이어4" oninput="syncNames()" onfocus="this.select()">
         </div>
     </div>
+
     <div class="card">
         <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">📝 판 결과 (승자 점수 입력)</div>
         <div id="playerRows"></div>
         <button class="mainBtn addBtn" onclick="addRound()">이번 판 저장</button>
         <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 취소</button>
     </div>
+
     <div class="card">
         <button class="copy-btn" onclick="copyResult()">결과 복사</button>
         <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">🏆 누적 현황 및 정산</div>
@@ -70,6 +107,7 @@
         <div style="margin-top: 20px; font-weight: bold; font-size: 14px; color: #333;">📜 판별 상세 기록</div>
         <div id="history" class="history-list">기록이 없습니다.</div>
     </div>
+
     <button class="mainBtn resetBtn" onclick="resetGame()">전체 초기화</button>
 </div>
 
@@ -79,6 +117,13 @@
     let excludes = [false, false, false, false];
 
     window.onload = () => { buildRows(); loadGame(); };
+
+    // 모달 제어 함수
+    function openModal() { document.getElementById('helpModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('helpModal').style.display = 'none'; }
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('helpModal')) closeModal();
+    }
 
     function buildRows() {
         const container = document.getElementById('playerRows');
@@ -96,7 +141,6 @@
                     </div>
                     <div class="row-options" id="options${i}">
                         <button class="opt-btn exclude-btn" id="ex${i}" onclick="toggleEx(${i})">휴식</button>
-                        <button class="opt-btn pak-btn gobak-btn" id="gb${i}" onclick="toggleGobak(${i})">고박(독박)</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">피박</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">광박</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">멍박</button>
@@ -137,16 +181,6 @@
         });
     }
 
-    function toggleGobak(idx) {
-        // 고박은 한 판에 한 명만 가능하므로 다른 플레이어의 고박을 해제
-        const allGobakBtns = document.querySelectorAll('.gobak-btn');
-        const currentBtn = document.getElementById(`gb${idx}`);
-        const isActive = currentBtn.classList.contains('active');
-        
-        allGobakBtns.forEach(btn => btn.classList.remove('active'));
-        if (!isActive) currentBtn.classList.add('active');
-    }
-
     function resetOptionsUI() {
         excludes = [false, false, false, false];
         document.querySelectorAll('.opt-btn').forEach(btn => {
@@ -159,24 +193,12 @@
     function addRound() {
         const scoreVal = parseInt(document.getElementById(`input${winnerIdx}`).value) || 0;
         if (scoreVal <= 0) { alert("승리 점수를 입력해 주세요."); return; }
-
         let currentScores = [0, 0, 0, 0];
         let winSum = 0;
         let details = [];
-        let gobakIdx = -1;
-
-        // 고박 쓴 사람 찾기
-        for (let i = 0; i < 4; i++) {
-            if (document.getElementById(`gb${i}`) && document.getElementById(`gb${i}`).classList.contains('active')) {
-                gobakIdx = i;
-                break;
-            }
-        }
-
         for (let i = 0; i < 4; i++) {
             const name = document.getElementById(`name${i}`).value || `P${i+1}`;
             if (i === winnerIdx) continue;
-            
             if (excludes[i]) {
                 currentScores[i] = 0;
                 details.push(`${name}(휴식)`);
@@ -184,45 +206,23 @@
                 let m = 1;
                 let pakNames = [];
                 document.querySelectorAll(`#options${i} .pak-btn.active`).forEach((btn) => { 
-                    if (btn.innerText !== '고박(독박)') {
-                        m *= 2; 
-                        pakNames.push(btn.innerText);
-                    }
+                    m *= 2; 
+                    pakNames.push(btn.innerText);
                 });
-                let personalLoss = -(scoreVal * m);
-                currentScores[i] = personalLoss;
-                winSum += Math.abs(personalLoss);
-                
+                currentScores[i] = -(scoreVal * m);
+                winSum += Math.abs(currentScores[i]);
                 let pakStr = pakNames.length > 0 ? `(${pakNames.join(',')})` : "";
-                details.push(`${name}${pakStr}: ${personalLoss}`);
+                details.push(`${name}${pakStr}: ${currentScores[i]}`);
             }
         }
-
-        // 고박 로직 적용: 고박 쓴 사람이 있으면 다른 패자들의 점수를 0으로 만들고 혼자 다 냄
-        if (gobakIdx !== -1) {
-            let totalLoss = 0;
-            let gobakName = document.getElementById(`name${gobakIdx}`).value || `P${gobakIdx+1}`;
-            for (let i = 0; i < 4; i++) {
-                if (i !== winnerIdx && !excludes[i]) {
-                    totalLoss += currentScores[i];
-                    if (i !== gobakIdx) currentScores[i] = 0;
-                }
-            }
-            currentScores[gobakIdx] = totalLoss;
-            details.push(`🚨 ${gobakName} 고박(독박)!`);
-        }
-
         currentScores[winnerIdx] = winSum;
-
         rounds.push({ 
             scores: currentScores, 
             winner: winnerIdx, 
             winnerName: document.getElementById(`name${winnerIdx}`).value || `P${winnerIdx+1}`,
             winScore: scoreVal,
-            details: details.join(", "),
-            gobakIdx: gobakIdx
+            details: details.join(", ")
         });
-        
         document.getElementById(`input${winnerIdx}`).value = '';
         resetOptionsUI();
         saveGame();
@@ -235,7 +235,6 @@
         let totals = [0,0,0,0];
         let settlementMatrix = Array.from(Array(4), () => Array(4).fill(0));
         let historyHtml = "";
-
         rounds.forEach((r, idx) => {
             r.scores.forEach((s, i) => totals[i] += s);
             r.scores.forEach((s, payerIdx) => {
@@ -246,13 +245,11 @@
                 <span style="color:#777">${r.details}</span>
             </div>` + historyHtml;
         });
-
         document.getElementById('history').innerHTML = historyHtml || "기록이 없습니다.";
         let sortedRank = names.map((n, i) => ({ n, s: totals[i] })).sort((a,b) => b.s - a.s);
         document.getElementById('ranking').innerHTML = sortedRank.map((p, i) => 
             `${i+1}위: <span class="${i==0 && p.s>0 ? 'rank-winner' : ''}">${p.n} (${p.s.toLocaleString()})</span>`
         ).join('<br>');
-
         let finalSettlement = [];
         let tempMatrix = settlementMatrix.map(row => [...row]);
         for (let i = 0; i < 4; i++) {
@@ -265,13 +262,13 @@
         document.getElementById('result').innerHTML = finalSettlement.join('<br>') || "정산 내역 없음";
     }
 
-    function saveGame() { localStorage.setItem("gostop_vMasterPro4", JSON.stringify(rounds)); }
+    function saveGame() { localStorage.setItem("gostop_vFinal_modal", JSON.stringify(rounds)); }
     function loadGame() {
-        const data = localStorage.getItem("gostop_vMasterPro4");
+        const data = localStorage.getItem("gostop_vFinal_modal");
         if(data) { rounds = JSON.parse(data); render(); }
     }
     function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
-    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.removeItem("gostop_vMasterPro4"); location.reload(); } }
+    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.removeItem("gostop_vFinal_modal"); location.reload(); } }
     function copyResult() {
         const text = document.getElementById('result').innerText;
         const historyText = document.getElementById('history').innerText;
