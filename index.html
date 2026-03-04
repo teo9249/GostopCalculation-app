@@ -3,49 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고스톱 정산기 Smart Master Pro</title>
+    <title>고스톱 정산기 Smart Master Pro Final</title>
     <style>
         :root { --primary: #1e3c72; --secondary: #2a5298; --accent: #28a745; --danger: #dc3545; --warning: #ffc107; }
         body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--primary), var(--secondary)); margin:0; padding:10px; color:white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 500px; }
-        
-        /* 타이틀 및 설명서 버튼 */
         .header { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0; }
         h2 { margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .help-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer; transition: 0.2s; }
-        .help-btn:hover { background: white; color: var(--primary); }
-
+        .help-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer; }
         .card { background:white; color:#333; padding:15px; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.3); }
         .name-section { display: flex; justify-content: space-between; gap: 5px; }
         .nameInput { width: 22%; padding:8px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; font-size: 14px; outline: none; }
         .nameInput:focus { border-color: var(--secondary); background: #f0f7ff; }
-        
-        /* 설명서 모달 스타일 */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: white; color: #333; padding: 20px; border-radius: 15px; max-width: 450px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; }
-        .modal-header { font-weight: bold; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: flex; justify-content: space-between; }
-        .close-modal { cursor: pointer; font-size: 20px; }
-        .help-item { margin-bottom: 12px; font-size: 14px; line-height: 1.5; }
-        .help-item b { color: var(--primary); }
-
-        /* 기존 스타일 유지 */
         .player-row { border-bottom: 1px solid #eee; padding: 12px 0; }
-        .player-row:last-child { border: none; }
         .row-main { display: flex; align-items: center; gap: 10px; }
         .role-radio { transform: scale(1.3); cursor: pointer; }
         .player-name-label { width: 75px; font-weight: bold; font-size: 15px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .score-input-container { flex: 1; display: flex; align-items: center; gap: 8px; }
         .score-input { width: 100%; max-width: 100px; padding: 10px; border-radius: 8px; border: 2px solid var(--accent); text-align: center; font-size: 18px; font-weight: bold; outline: none; }
         .score-input:disabled { border-color: #eee; background: #f9f9f9; opacity: 0; pointer-events: none; }
         .win-tag { font-weight: bold; color: var(--accent); font-size: 14px; display: none; }
         .row-options { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 30px; margin-top: 8px; }
-        .opt-btn { font-size: 11px; padding: 6px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; transition: 0.1s; }
-        .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; box-shadow: 0 2px 5px rgba(255,77,77,0.4); }
-        .opt-btn.multi-btn { background: #f0f0f0; border-color: #bbb; color: #333; }
-        .opt-btn.multi-btn.active { background: #6610f2; color: white; border-color: #6610f2; }
-        .opt-btn.exclude-btn { border-color: #6c757d; color: #6c757d; }
+        .opt-btn { font-size: 11px; padding: 6px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; }
+        .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; }
+        .opt-btn.multi-btn.active { background: #6610f2; color: white; }
         .opt-btn.exclude-btn.active { background: #6c757d; color: white; }
-        .mainBtn { width:100%; padding:15px; margin-top:10px; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .mainBtn { width:100%; padding:15px; margin-top:10px; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor: pointer; }
         .addBtn { background: var(--accent); color:white; }
         .undoBtn { background: var(--warning); color: #333; margin-top: 10px; }
         .resetBtn { background: var(--danger); color:white; margin-top: 25px; font-size: 14px; opacity: 0.9; }
@@ -68,18 +52,13 @@
 
     <div id="helpModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <span>📖 사용 설명서</span>
-                <span class="close-modal" onclick="closeModal()">&times;</span>
-            </div>
-            <div class="help-item"><b>1. 이름 설정:</b> 상단 플레이어 칸을 클릭해 이름을 입력하세요. (클릭 시 자동 전체선택)</div>
-            <div class="help-item"><b>2. 승자 선택:</b> 이긴 사람 왼쪽의 라디오 버튼을 체크하세요.</div>
-            <div class="help-item"><b>3. 점수 입력:</b> 승자의 점수를 입력하세요. (7점 등)</div>
-            <div class="help-item"><b>4. 패자 옵션:</b> 피박, 광박 등 해당되는 항목을 체크하세요. <b>[추가x2]</b>는 누를 때마다 배수가 중첩됩니다.</div>
-            <div class="help-item"><b>5. 휴식:</b> 광 팔고 죽은 패자는 [휴식]을 누르세요.</div>
-            <div class="help-item"><b>6. 고박(독박) 처리:</b> 고박 쓴 사람 1명만 남기고 나머지 패자는 모두 <b>[휴식]</b>을 체크하면 됩니다.</div>
-            <div class="help-item"><b>7. 정산 확인:</b> 게임 종료 후 하단 <b>정산 내역</b>을 보고 송금하면 끝!</div>
-            <button class="mainBtn addBtn" style="background:var(--secondary)" onclick="closeModal()">확인했습니다</button>
+            <h3 style="margin-top:0">📖 사용 설명서</h3>
+            <p>1. <b>이름 설정</b>: 상단 칸에 이름을 넣으세요. (클릭 시 자동선택)</p>
+            <p>2. <b>승자/점수</b>: 승자를 체크하고 점수를 넣으세요.</p>
+            <p>3. <b>패자 옵션</b>: 박, 고/흔듦, 추가x2 등을 체크하세요.</p>
+            <p>4. <b>휴식</b>: 참여 안 한 사람은 '휴식' 클릭.</p>
+            <p>5. <b>고박(독박)</b>: 고박 쓴 1인만 남기고 나머진 '휴식' 클릭.</p>
+            <button class="mainBtn addBtn" onclick="closeModal()">닫기</button>
         </div>
     </div>
 
@@ -93,7 +72,7 @@
     </div>
 
     <div class="card">
-        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">📝 판 결과 (승자 점수 입력)</div>
+        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">📝 판 결과 입력</div>
         <div id="playerRows"></div>
         <button class="mainBtn addBtn" onclick="addRound()">이번 판 저장</button>
         <button class="mainBtn undoBtn" onclick="undoLast()">↩ 마지막 취소</button>
@@ -101,10 +80,10 @@
 
     <div class="card">
         <button class="copy-btn" onclick="copyResult()">결과 복사</button>
-        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">🏆 누적 현황 및 정산</div>
+        <div style="margin-bottom: 10px; font-weight: bold; font-size: 14px;">🏆 누적 정산 현황</div>
         <div id="ranking"></div>
         <div id="result">정산 내역 없음</div>
-        <div style="margin-top: 20px; font-weight: bold; font-size: 14px; color: #333;">📜 판별 상세 기록</div>
+        <div style="margin-top: 20px; font-weight: bold; font-size: 14px;">📜 판별 상세 기록</div>
         <div id="history" class="history-list">기록이 없습니다.</div>
     </div>
 
@@ -118,12 +97,8 @@
 
     window.onload = () => { buildRows(); loadGame(); };
 
-    // 모달 제어 함수
     function openModal() { document.getElementById('helpModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('helpModal').style.display = 'none'; }
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('helpModal')) closeModal();
-    }
 
     function buildRows() {
         const container = document.getElementById('playerRows');
@@ -156,7 +131,7 @@
         for (let i = 0; i < 4; i++) {
             document.getElementById(`label${i}`).innerText = document.getElementById(`name${i}`).value || `P${i+1}`;
         }
-        changeWinner(winnerIdx); 
+        render(); // 이름 변경 시 즉시 랭킹판 업데이트
     }
 
     function changeWinner(idx) {
@@ -166,7 +141,6 @@
             document.getElementById(`input${i}`).disabled = !isWin;
             document.getElementById(`tag${i}`).style.display = isWin ? 'inline' : 'none';
             document.getElementById(`options${i}`).style.display = isWin ? 'none' : 'flex';
-            if(!isWin) document.getElementById(`input${i}`).value = '';
         }
     }
 
@@ -181,41 +155,34 @@
         });
     }
 
-    function resetOptionsUI() {
-        excludes = [false, false, false, false];
-        document.querySelectorAll('.opt-btn').forEach(btn => {
-            btn.classList.remove('active');
-            btn.disabled = false;
-            btn.style.opacity = '1';
-        });
-    }
-
     function addRound() {
         const scoreVal = parseInt(document.getElementById(`input${winnerIdx}`).value) || 0;
-        if (scoreVal <= 0) { alert("승리 점수를 입력해 주세요."); return; }
+        if (scoreVal <= 0) { alert("승리 점수를 입력하세요."); return; }
+        
         let currentScores = [0, 0, 0, 0];
         let winSum = 0;
         let details = [];
+
         for (let i = 0; i < 4; i++) {
-            const name = document.getElementById(`name${i}`).value || `P${i+1}`;
             if (i === winnerIdx) continue;
+            const name = document.getElementById(`name${i}`).value || `P${i+1}`;
             if (excludes[i]) {
-                currentScores[i] = 0;
                 details.push(`${name}(휴식)`);
             } else {
                 let m = 1;
                 let pakNames = [];
-                document.querySelectorAll(`#options${i} .pak-btn.active`).forEach((btn) => { 
+                document.querySelectorAll(`#options${i} .pak-btn.active`).forEach(btn => { 
                     m *= 2; 
                     pakNames.push(btn.innerText);
                 });
-                currentScores[i] = -(scoreVal * m);
-                winSum += Math.abs(currentScores[i]);
-                let pakStr = pakNames.length > 0 ? `(${pakNames.join(',')})` : "";
-                details.push(`${name}${pakStr}: ${currentScores[i]}`);
+                let loss = scoreVal * m;
+                currentScores[i] = -loss;
+                winSum += loss;
+                details.push(`${name}${pakNames.length?`(${pakNames.join(',')})`:''}: -${loss}`);
             }
         }
         currentScores[winnerIdx] = winSum;
+
         rounds.push({ 
             scores: currentScores, 
             winner: winnerIdx, 
@@ -223,56 +190,69 @@
             winScore: scoreVal,
             details: details.join(", ")
         });
+        
         document.getElementById(`input${winnerIdx}`).value = '';
-        resetOptionsUI();
+        resetUI();
         saveGame();
         render();
+    }
+
+    function resetUI() {
+        excludes = [false, false, false, false];
+        document.querySelectorAll('.opt-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        });
         changeWinner(winnerIdx);
     }
 
     function render() {
         let names = [0,1,2,3].map(i => document.getElementById(`name${i}`).value || `P${i+1}`);
         let totals = [0,0,0,0];
-        let settlementMatrix = Array.from(Array(4), () => Array(4).fill(0));
+        let matrix = Array.from(Array(4), () => Array(4).fill(0));
         let historyHtml = "";
+
+        // 모든 판을 순회하며 누적 점수와 상계 매트릭스 계산
         rounds.forEach((r, idx) => {
-            r.scores.forEach((s, i) => totals[i] += s);
-            r.scores.forEach((s, payerIdx) => {
-                if (s < 0) settlementMatrix[payerIdx][r.winner] += Math.abs(s);
+            r.scores.forEach((s, i) => {
+                totals[i] += s;
+                if (s < 0) matrix[i][r.winner] += Math.abs(s);
             });
-            historyHtml = `<div class="history-item">
-                <b>[${idx + 1}판]</b> <span class="history-winner">${r.winnerName} +${r.winScore}점 승</span><br>
-                <span style="color:#777">${r.details}</span>
-            </div>` + historyHtml;
+            historyHtml = `<div class="history-item"><b>[${idx+1}판]</b> ${r.winnerName} +${r.winScore}점 승<br><small>${r.details}</small></div>` + historyHtml;
         });
-        document.getElementById('history').innerHTML = historyHtml || "기록이 없습니다.";
-        let sortedRank = names.map((n, i) => ({ n, s: totals[i] })).sort((a,b) => b.s - a.s);
-        document.getElementById('ranking').innerHTML = sortedRank.map((p, i) => 
-            `${i+1}위: <span class="${i==0 && p.s>0 ? 'rank-winner' : ''}">${p.n} (${p.s.toLocaleString()})</span>`
+
+        document.getElementById('history').innerHTML = historyHtml || "기록 없음";
+
+        // 랭킹 표시
+        let sorted = names.map((n, i) => ({ n, s: totals[i] })).sort((a,b) => b.s - a.s);
+        document.getElementById('ranking').innerHTML = sorted.map((p, i) => 
+            `${i+1}위: <span class="${i==0 && p.s>0?'rank-winner':''}">${p.n} (${p.s.toLocaleString()})</span>`
         ).join('<br>');
-        let finalSettlement = [];
-        let tempMatrix = settlementMatrix.map(row => [...row]);
+
+        // 최종 상계 정산 (A -> B와 B -> A를 서로 지움)
+        let final = [];
         for (let i = 0; i < 4; i++) {
             for (let j = i + 1; j < 4; j++) {
-                let net = tempMatrix[i][j] - tempMatrix[j][i];
-                if (net > 0) finalSettlement.push(`${names[i]} ⮕ ${names[j]} : ${net.toLocaleString()}점`);
-                else if (net < 0) finalSettlement.push(`${names[j]} ⮕ ${names[i]} : ${Math.abs(net).toLocaleString()}점`);
+                let net = matrix[i][j] - matrix[j][i];
+                if (net > 0) final.push(`${names[i]} ⮕ ${names[j]} : ${net.toLocaleString()}점`);
+                else if (net < 0) final.push(`${names[j]} ⮕ ${names[i]} : ${Math.abs(net).toLocaleString()}점`);
             }
         }
-        document.getElementById('result').innerHTML = finalSettlement.join('<br>') || "정산 내역 없음";
+        document.getElementById('result').innerHTML = final.join('<br>') || "정산 내역 없음";
     }
 
-    function saveGame() { localStorage.setItem("gostop_vFinal_modal", JSON.stringify(rounds)); }
+    function saveGame() { localStorage.setItem("gostop_vFinal_checked", JSON.stringify(rounds)); }
     function loadGame() {
-        const data = localStorage.getItem("gostop_vFinal_modal");
+        const data = localStorage.getItem("gostop_vFinal_checked");
         if(data) { rounds = JSON.parse(data); render(); }
     }
     function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
-    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.removeItem("gostop_vFinal_modal"); location.reload(); } }
+    function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.clear(); location.reload(); } }
     function copyResult() {
-        const text = document.getElementById('result').innerText;
-        const historyText = document.getElementById('history').innerText;
-        navigator.clipboard.writeText("💰 고스톱 정산 최종 💰\n" + text + "\n\n📜 상세 내역\n" + historyText).then(() => alert("복사되었습니다!"));
+        const res = document.getElementById('result').innerText;
+        const hist = document.getElementById('history').innerText;
+        navigator.clipboard.writeText("💰 고스톱 정산 최종 💰\n" + res + "\n\n📜 상세 기록\n" + hist).then(() => alert("복사 완료!"));
     }
 </script>
 </body>
