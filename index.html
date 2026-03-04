@@ -39,12 +39,14 @@ button{
 }
 .primary{background:#4CAF50;color:white;}
 .danger{background:#ff4d4d;color:white;}
-.install{background:#ffcc00;width:100%;}
+.install{background:#ffcc00;}
 .scoreRow{
   display:flex;
   gap:5px;
 }
-.scoreRow input{flex:1;}
+.scoreRow input{
+  flex:1;
+}
 .minusBtn{
   width:40px;
   background:#555;
@@ -64,22 +66,21 @@ button{
 <body>
 
 <h1>🎴 고스톱 정산기</h1>
-
 <div class="card">
 <h3>📖 사용 방법</h3>
+<div style="font-size:14px;line-height:1.6;">
 ✔ 승자는 가져갈 <b>총 점수</b> 입력<br>
-✔ 패자는 <b>- 버튼</b> 눌러 음수로 잃은 점수 입력<br>
+✔ 패자는 <b>- 버튼</b> 눌러 음수로 입력<br>
 ✔ 한 판 합계는 반드시 <b>0</b> 이어야 함<br>
 ✔ 합계가 0이 아니면 판 추가 안 됨
 </div>
-
-<div id="iosGuide" class="card" style="display:none;">
-📱 아이폰은 Safari → 공유 버튼 → "홈 화면에 추가"
 </div>
 
-<button id="installBtn" class="install" style="display:none;">
-📲 앱 설치하기
-</button>
+<div id="iosGuide" style="display:none;background:white;color:black;padding:10px;border-radius:10px;margin-bottom:15px;">
+📱 아이폰은 Safari → 공유 버튼 → "홈 화면에 추가"로 설치하세요.
+</div>
+
+<button id="installBtn" class="install" style="display:none;width:100%;">📲 앱 설치하기</button>
 
 <div class="card">
 <h3>플레이어 이름</h3>
@@ -107,11 +108,9 @@ button{
 </div>
 
 <div class="card">
-<button id="resetBtn" class="danger" style="width:100%;user-select:none;touch-action:none;">
-⚠ 전체 초기화 (3초 길게 누르기)
-</button>
+<button id="resetBtn" class="danger" style="width:100%;">⚠ 전체 초기화 (3초 길게 누르기)</button>
 <div style="background:#ddd;border-radius:6px;margin-top:8px;">
-<div id="progressBar"></div>
+  <div id="progressBar"></div>
 </div>
 </div>
 
@@ -187,7 +186,7 @@ function render(){
 function renderHistory(){
   let html="";
   history.forEach((r,idx)=>{
-    html+=`<div>${idx+1}판 : ${r.join(", ")}</div>`;
+    html+=`<div> ${idx+1}판 : ${r.join(", ")}</div>`;
   });
   document.getElementById("history").innerHTML=html;
 }
@@ -225,48 +224,36 @@ function loadData(){
 }
 loadData();
 
-/* ====== 안정형 3초 길게 초기화 ====== */
-
-const resetBtn=document.getElementById("resetBtn");
-const progressBar=document.getElementById("progressBar");
-
-let pressTimer=null;
+let pressTimer;
 let progress=0;
+const progressBar=document.getElementById("progressBar");
+const resetBtn=document.getElementById("resetBtn");
 
-function startPress(e){
-  e.preventDefault();
+resetBtn.addEventListener("mousedown",startPress);
+resetBtn.addEventListener("touchstart",startPress);
+resetBtn.addEventListener("mouseup",cancelPress);
+resetBtn.addEventListener("mouseleave",cancelPress);
+resetBtn.addEventListener("touchend",cancelPress);
+
+function startPress(){
   progress=0;
   progressBar.style.width="0%";
-
   pressTimer=setInterval(()=>{
-    progress+=2;
+    progress+=3.3;
     progressBar.style.width=progress+"%";
-
     if(progress>=100){
       clearInterval(pressTimer);
-      if(confirm("정말 전체 초기화 하시겠습니까?")){
-        localStorage.clear();
-        location.reload();
-      }else{
-        progressBar.style.width="0%";
-      }
+      localStorage.clear();
+      location.reload();
     }
-  },60);
+  },100);
 }
-
 function cancelPress(){
   clearInterval(pressTimer);
   progressBar.style.width="0%";
 }
 
-resetBtn.addEventListener("pointerdown",startPress);
-resetBtn.addEventListener("pointerup",cancelPress);
-resetBtn.addEventListener("pointerleave",cancelPress);
-resetBtn.addEventListener("pointercancel",cancelPress);
-
-/* ====== PWA ====== */
-
-if("serviceWorker" in navigator){
+if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 }
 
@@ -275,7 +262,6 @@ window.addEventListener("beforeinstallprompt",(e)=>{
   deferredPrompt=e;
   installBtn.style.display="block";
 });
-
 installBtn.addEventListener("click",async()=>{
   installBtn.style.display="none";
   deferredPrompt.prompt();
