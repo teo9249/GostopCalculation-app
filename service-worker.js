@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = "gostop-cache-v4";
+﻿const CACHE_NAME = "gostop-cache-v1";
 const urlsToCache = [
   "./",
   "./index.html",
@@ -19,3 +19,4 @@ self.addEventListener("fetch", event => {
   );
 
 });
+
