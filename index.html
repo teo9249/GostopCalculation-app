@@ -25,33 +25,8 @@
         .nameInput { width: 22%; padding:10px 5px; border-radius:8px; border:1px solid #ddd; text-align:center; font-weight: bold; font-size: 14px; outline: none; }
         .nameInput:focus { border-color: var(--secondary); background: #f0f7ff; }
 
-        /* --- 모달 정렬 수정 부분 --- */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.8); 
-            justify-content: center; 
-            align-items: center; 
-        }
-        .modal-content { 
-            background: white; 
-            color: #333; 
-            padding: 25px; 
-            border-radius: 20px; 
-            width: 85%; /* 화면 너비의 85% 사용 */
-            max-width: 400px; 
-            max-height: 80vh; 
-            overflow-y: auto; 
-            position: relative;
-            box-sizing: border-box; /* 패딩이 너비에 영향을 주지 않도록 설정 */
-        }
-        /* -------------------------- */
-
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+        .modal-content { background: white; color: #333; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; max-height: 80vh; overflow-y: auto; position: relative; box-sizing: border-box; }
         .modal-content h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .modal-content p { font-size: 14px; line-height: 1.6; margin: 10px 0; }
         .ios-tip { background: #f8f9fa; padding: 12px; border-radius: 10px; border-left: 4px solid #007aff; margin-top: 15px; }
@@ -65,9 +40,16 @@
         .win-tag { font-weight: bold; color: var(--accent); font-size: 14px; display: none; }
 
         .row-options { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 30px; margin-top: 10px; }
-        .opt-btn { font-size: 11px; padding: 8px 10px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; }
+        .opt-btn { font-size: 11px; padding: 8px 10px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        
+        /* 일반 옵션 (피박, 광박 등) */
         .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; }
-        .opt-btn.go-btn.active { background: #6610f2; color: white; border-color: #6610f2; }
+        
+        /* 고 옵션 단계별 색상 변화 */
+        .go-3.active { background: #8e44ad; color: white; border-color: #8e44ad; } /* 보라 */
+        .go-4.active { background: #d35400; color: white; border-color: #d35400; } /* 진한 주황 */
+        .go-5.active { background: #c0392b; color: white; border-color: #c0392b; box-shadow: 0 0 8px rgba(192,57,43,0.5); } /* 강렬한 레드 */
+        
         .opt-btn.exclude-btn.active { background: #6c757d; color: white; border-color: #6c757d; }
 
         .mainBtn { width:100%; padding:18px; margin-top:10px; border:none; border-radius:15px; font-size:17px; font-weight:bold; cursor: pointer; transition: 0.1s; }
@@ -184,9 +166,9 @@
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">광박</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">멍따</button>
                         <button class="opt-btn pak-btn" onclick="this.classList.toggle('active')">흔듦</button>
-                        <button class="opt-btn pak-btn go-btn" onclick="this.classList.toggle('active')">3고</button>
-                        <button class="opt-btn pak-btn go-btn" onclick="this.classList.toggle('active')">4고</button>
-                        <button class="opt-btn pak-btn go-btn" onclick="this.classList.toggle('active')">5고</button>
+                        <button class="opt-btn pak-btn go-btn go-3" onclick="this.classList.toggle('active')">3고</button>
+                        <button class="opt-btn pak-btn go-btn go-4" onclick="this.classList.toggle('active')">4고</button>
+                        <button class="opt-btn pak-btn go-btn go-5" onclick="this.classList.toggle('active')">5고</button>
                     </div>
                 </div>`;
         }
