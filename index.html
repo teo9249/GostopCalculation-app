@@ -42,13 +42,12 @@
         .row-options { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 30px; margin-top: 10px; }
         .opt-btn { font-size: 11px; padding: 8px 10px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
         
-        /* 일반 옵션 (피박, 광박 등) */
         .opt-btn.active { background: #ff4d4d; color: white; border-color: #ff4d4d; }
         
-        /* 고 옵션 단계별 색상 변화 */
-        .go-3.active { background: #8e44ad; color: white; border-color: #8e44ad; } /* 보라 */
-        .go-4.active { background: #d35400; color: white; border-color: #d35400; } /* 진한 주황 */
-        .go-5.active { background: #c0392b; color: white; border-color: #c0392b; box-shadow: 0 0 8px rgba(192,57,43,0.5); } /* 강렬한 레드 */
+        /* 자주색 계열 단계별 강화 */
+        .go-3.active { background: #a55eea; color: white; border-color: #a55eea; } /* 밝은 자주 */
+        .go-4.active { background: #8854d0; color: white; border-color: #8854d0; } /* 진한 자주 */
+        .go-5.active { background: #4b0082; color: white; border-color: #4b0082; box-shadow: 0 0 10px rgba(75, 0, 130, 0.4); } /* 딥 인디고 퍼플 */
         
         .opt-btn.exclude-btn.active { background: #6c757d; color: white; border-color: #6c757d; }
 
@@ -131,12 +130,6 @@
 </div>
 
 <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail:', err));
-        });
-    }
-
     let rounds = []; 
     let winnerIdx = 0;
     let excludes = [false, false, false, false];
