@@ -68,6 +68,9 @@
         .history-item { margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #ddd; }
         
         .sub-guide { font-size: 11px; font-weight: normal; color: #666; margin-left: 5px; }
+        /* X 버튼 스타일 */
+        .close-x { position: absolute; top: 15px; right: 15px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; line-height: 1; padding: 5px; z-index: 1001; }
+        .close-x:active { color: #333; scale: 0.9; }
         .score-rule-btn { float: right; background: none; border: 1px solid #aaa; color: #666; border-radius: 10px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
     </style>
 </head>
@@ -81,6 +84,7 @@
 
     <div id="helpModal" class="modal">
         <div class="modal-content">
+            <span class="close-x" onclick="closeModal('helpModal')">&times;</span>
             <h3>📖 사용 설명서</h3>
             <p>1. <b>이름 설정</b>: 상단 칸에 이름을 넣으세요.</p>
             <p>2. <b>승자/점수</b>: 승자를 체크하고 점수를 넣으세요.</p>
@@ -98,6 +102,7 @@
 
     <div id="scoreModal" class="modal">
         <div class="modal-content">
+            <span class="close-x" onclick="closeModal('scoreModal')">&times;</span>
             <h3>🎴 고스톱 점수 계산법</h3>
             <div class="score-guide-section">
                 <h4>1. 기본 점수</h4>
@@ -333,9 +338,16 @@
         const hist = document.getElementById('history').innerText;
         navigator.clipboard.writeText("💰 고스톱 정산 최종 💰\n" + res + "\n\n📜 상세 기록\n" + hist).then(() => alert("복사 완료!"));
     }
+    // 팝업 바깥 영역 클릭 시 닫기
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
 </script>
 </body>
 </html>
+
 
 
 
