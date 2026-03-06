@@ -177,9 +177,11 @@
     let winnerIdx = 0;
     let excludes = [false, false, false, false];
 
+    // 페이지 로드 시 실행 순서가 중요합니다.
     window.onload = () => { 
-        buildRows(); 
-        loadGame(); // 페이지 로드 시 이름과 점수 불러오기
+        loadNames(); // 1. 저장된 이름부터 불러오기
+        buildRows(); // 2. 줄 만들기
+        loadRounds(); // 3. 점수 기록 불러오기
     };
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -211,14 +213,20 @@
                     </div>
                 </div>`;
         }
-        syncNames();
+        syncLabels();
     }
 
-    function syncNames() {
+    // 라벨만 동기화 (저장 X)
+    function syncLabels() {
         for (let i = 0; i < 4; i++) {
             document.getElementById(`label${i}`).innerText = document.getElementById(`name${i}`).value || `P${i+1}`;
         }
-        saveGame(); // 이름 타이핑할 때마다 바로 저장
+    }
+
+    // 이름 입력 시 실행 (라벨 변경 + 저장)
+    function syncNames() {
+        syncLabels();
+        saveNames();
         render();
     }
 
@@ -284,7 +292,7 @@
         
         document.getElementById(`input${winnerIdx}`).value = '';
         resetUI();
-        saveGame();
+        saveRounds();
         render();
     }
 
@@ -330,45 +338,37 @@
         document.getElementById('result').innerHTML = final.join('<br>') || "정산 내역 없음";
     }
 
-    // 이름과 라운드 기록 모두 저장
-    function saveGame() { 
-        const currentNames = [0,1,2,3].map(i => document.getElementById(`name${i}`).value);
-        localStorage.setItem("gostop_vFinal_checked", JSON.stringify(rounds));
-        localStorage.setItem("gostop_names_saved", JSON.stringify(currentNames));
+    // 이름 저장/불러오기 분리
+    function saveNames() {
+        const names = [0,1,2,3].map(i => document.getElementById(`name${i}`).value);
+        localStorage.setItem("gostop_names_v2", JSON.stringify(names));
     }
-
-    // 이름과 라운드 기록 모두 불러오기
-    function loadGame() {
-        const data = localStorage.getItem("gostop_vFinal_checked");
-        const namesData = localStorage.getItem("gostop_names_saved");
-
-        if(namesData) {
-            const savedNames = JSON.parse(namesData);
-            savedNames.forEach((name, i) => {
-                if(name) {
-                    document.getElementById(`name${i}`).value = name;
-                    document.getElementById(`label${i}`).innerText = name;
-                }
-            });
-        }
-
-        if(data) { 
-            rounds = JSON.parse(data); 
-            render(); 
+    function loadNames() {
+        const data = localStorage.getItem("gostop_names_v2");
+        if(data) {
+            const savedNames = JSON.parse(data);
+            savedNames.forEach((n, i) => { if(n) document.getElementById(`name${i}`).value = n; });
         }
     }
 
-    function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
+    // 기록 저장/불러오기 분리
+    function saveRounds() { localStorage.setItem("gostop_rounds_v2", JSON.stringify(rounds)); }
+    function loadRounds() {
+        const data = localStorage.getItem("gostop_rounds_v2");
+        if(data) { rounds = JSON.parse(data); render(); }
+    }
+
+    function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveRounds(); render(); } }
     function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.clear(); location.reload(); } }
+    
     function copyResult() {
         const res = document.getElementById('result').innerText;
         const hist = document.getElementById('history').innerText;
         navigator.clipboard.writeText("💰 고스톱 정산 최종 💰\n" + res + "\n\n📜 상세 기록\n" + hist).then(() => alert("복사 완료!"));
     }
+
     window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = "none";
-        }
+        if (event.target.classList.contains('modal')) { event.target.style.display = "none"; }
     }
 </script>
 </body>
