@@ -57,7 +57,7 @@
         .mainBtn:active { transform: scale(0.98); }
         .addBtn { background: var(--accent); color:white; }
         .undoBtn { background: var(--warning); color: #333; margin-top: 10px; }
-        .resetBtn { background: var(--danger); color:white; margin-top: 30 : 14px; opacity: 0.8; }
+        .resetBtn { background: var(--danger); color:white; margin-top: 30px; opacity: 0.8; font-size: 14px; }
 
         #result { white-space:pre-line; font-weight:bold; color: var(--secondary); line-height: 1.7; border-top: 1px solid #eee; padding-top: 15px; font-size: 16px; }
         #ranking { line-height: 1.9; margin-bottom: 15px; font-size: 15px; }
@@ -68,7 +68,6 @@
         .history-item { margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #ddd; }
         
         .sub-guide { font-size: 11px; font-weight: normal; color: #666; margin-left: 5px; }
-        /* X 버튼 스타일 */
         .close-x { position: absolute; top: 15px; right: 15px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; line-height: 1; padding: 5px; z-index: 1001; }
         .close-x:active { color: #333; scale: 0.9; }
         .score-rule-btn { float: right; background: none; border: 1px solid #aaa; color: #666; border-radius: 10px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
@@ -86,11 +85,10 @@
         <div class="modal-content">
             <span class="close-x" onclick="closeModal('helpModal')">&times;</span>
             <h3>📖 사용 설명서</h3>
-            <p>1. <b>이름 설정</b>: 상단 칸에 이름을 넣으세요.</p>
+            <p>1. <b>이름 설정</b>: 상단 칸에 이름을 넣으세요. (자동 저장됩니다!)</p>
             <p>2. <b>승자/점수</b>: 승자를 체크하고 점수를 넣으세요.</p>
             <p>3. <b>패자 옵션</b>: 박, 흔듦, 고(3,4,5) 등을 체크하세요.</p>
             <p>4. <b>휴식</b>: 참여 안 한 사람은 '휴식' 클릭.</p>
-            <p>5. <b>🚨 고박(독박)</b>: 승자는 패자들 점수 합산 입력 후, 고박자 1인만 남기고 나머지는 '휴식' 클릭.</p>
             <div class="ios-tip">
                 <strong style="color:#007aff;">📱 아이폰(iOS) 어플 설치 방법</strong><br>
                 1. Safari 브라우저에서 실행<br>
@@ -109,31 +107,9 @@
                 <h4>1. 기본 점수</h4>
                 <ul>
                     <li><b>피</b>: 10장(1점), 이후 1장당 +1점</li>
-                    <li><b>광</b>: 3장(3점/비광포함 2점), 4장(4점), 5장(15점)</li>
-                    <li><b>띠</b>: 종류별 <b>단(홍단/청단/초단)</b> 완성 시 각 3점, 일반 띠 5장(1점) 이후 1장당 +1점</li>
-                    <li><b>열끗(멍텅구리)</b>: 열끗 5장(1점) 이후 1장당 +1점</li>
-                    <li><b>고도리 (5점)</b>: 2월(휘파람새), 4월(두견새), 8월(기러기) 열끗 3종</li>                
+                    <li><b>광</b>: 3장(3점), 4장(4점), 5장(15점)</li>
+                    <li><b>고도리 (5점)</b></li>                
                 </ul>
-            </div>
-            <div class="score-guide-section">
-                <h4>2. 특수 상황 (피 빼앗기 등)</h4>
-                <ul>
-                    <li><b>폭탄</b>: 패 3장 내기 (2배 & 피 1장)</li>
-                    <li><b>쪽</b>: 낸 패와 뒤집은 패 일치 (피 1장)</li>
-                    <li><b>따닥</b>: 바닥패 2장 동시 획득 (피 1장)</li>
-                    <li><b>쓸</b>: 바닥패 모두 청소 (피 1장)</li>
-                    <li><b>첫뻑</b>: 첫 턴 뻑 (보너스 점수/즉시 승리 등)</li>
-                    <li><b>뻑처리</b>: 뻑이 난 3장의 패 획득 (피 1장,자뻑 시 피 2장)</li>
-                    <li><b>쓰리뻑</b>: 총 3번의 뻑을 하면 (즉시 승리)</li>
-                    <li><b>총통</b>: 같은 패 4장 보유 (즉시 승리)</li>
-                </ul>
-            </div>
-            <div class="score-guide-section">
-                <h4>3. 배수 규칙</h4>
-                <p>피박, 광박, 멍따(열끗 7장), 흔듦, 3고 이상 시 각각 <b>점수 2배 이상</b> 적용</p>
-            </div>
-            <div class="recommendation">
-                💡 계산방법은 지역, 사람 마다 차이가 있어 시작전에 자유롭게 규칙을 정한 후 진행 하시는걸 추천드립니다.   -엄마, 아빠가 언제 오냐는데?
             </div>
             <button class="mainBtn addBtn" onclick="closeModal('scoreModal')" style="margin-top:20px;">알겠습니다</button>
         </div>
@@ -178,7 +154,10 @@
     let winnerIdx = 0;
     let excludes = [false, false, false, false];
 
-    window.onload = () => { buildRows(); loadGame(); };
+    window.onload = () => { 
+        buildRows(); 
+        loadGame(); // 페이지 로드 시 이름과 점수 불러오기
+    };
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -216,6 +195,7 @@
         for (let i = 0; i < 4; i++) {
             document.getElementById(`label${i}`).innerText = document.getElementById(`name${i}`).value || `P${i+1}`;
         }
+        saveGame(); // 이름이 바뀔 때마다 자동 저장
         render();
     }
 
@@ -327,11 +307,32 @@
         document.getElementById('result').innerHTML = final.join('<br>') || "정산 내역 없음";
     }
 
-    function saveGame() { localStorage.setItem("gostop_vFinal_checked", JSON.stringify(rounds)); }
-    function loadGame() {
-        const data = localStorage.getItem("gostop_vFinal_checked");
-        if(data) { rounds = JSON.parse(data); render(); }
+    // 이름과 기록을 함께 저장하도록 수정
+    function saveGame() { 
+        const names = [0,1,2,3].map(i => document.getElementById(`name${i}`).value);
+        localStorage.setItem("gostop_rounds", JSON.stringify(rounds));
+        localStorage.setItem("gostop_names", JSON.stringify(names)); 
     }
+
+    // 이름과 기록을 함께 불러오도록 수정
+    function loadGame() {
+        const savedRounds = localStorage.getItem("gostop_rounds");
+        const savedNames = localStorage.getItem("gostop_names");
+
+        if(savedNames) {
+            const names = JSON.parse(savedNames);
+            names.forEach((n, i) => {
+                document.getElementById(`name${i}`).value = n;
+                document.getElementById(`label${i}`).innerText = n || `P${i+1}`;
+            });
+        }
+        
+        if(savedRounds) { 
+            rounds = JSON.parse(savedRounds); 
+            render(); 
+        }
+    }
+
     function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
     function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.clear(); location.reload(); } }
     function copyResult() {
@@ -339,20 +340,11 @@
         const hist = document.getElementById('history').innerText;
         navigator.clipboard.writeText("💰 고스톱 정산 최종 💰\n" + res + "\n\n📜 상세 기록\n" + hist).then(() => alert("복사 완료!"));
     }
-    // 팝업 바깥 영역 클릭 시 닫기
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
     }
-}
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
