@@ -57,7 +57,7 @@
         .mainBtn:active { transform: scale(0.98); }
         .addBtn { background: var(--accent); color:white; }
         .undoBtn { background: var(--warning); color: #333; margin-top: 10px; }
-        .resetBtn { background: var(--danger); color:white; margin-top: 30 : 14px; opacity: 0.8; }
+        .resetBtn { background: var(--danger); color:white; margin-top: 30px; opacity: 0.8; }
 
         #result { white-space:pre-line; font-weight:bold; color: var(--secondary); line-height: 1.7; border-top: 1px solid #eee; padding-top: 15px; font-size: 16px; }
         #ranking { line-height: 1.9; margin-bottom: 15px; font-size: 15px; }
@@ -68,7 +68,6 @@
         .history-item { margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px dashed #ddd; }
         
         .sub-guide { font-size: 11px; font-weight: normal; color: #666; margin-left: 5px; }
-        /* X 버튼 스타일 */
         .close-x { position: absolute; top: 15px; right: 15px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; line-height: 1; padding: 5px; z-index: 1001; }
         .close-x:active { color: #333; scale: 0.9; }
         .score-rule-btn { float: right; background: none; border: 1px solid #aaa; color: #666; border-radius: 10px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
@@ -178,7 +177,10 @@
     let winnerIdx = 0;
     let excludes = [false, false, false, false];
 
-    window.onload = () => { buildRows(); loadGame(); };
+    window.onload = () => { 
+        buildRows(); 
+        loadGame(); // 페이지 로드 시 이름과 점수 불러오기
+    };
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -216,6 +218,7 @@
         for (let i = 0; i < 4; i++) {
             document.getElementById(`label${i}`).innerText = document.getElementById(`name${i}`).value || `P${i+1}`;
         }
+        saveGame(); // 이름 타이핑할 때마다 바로 저장
         render();
     }
 
@@ -327,11 +330,34 @@
         document.getElementById('result').innerHTML = final.join('<br>') || "정산 내역 없음";
     }
 
-    function saveGame() { localStorage.setItem("gostop_vFinal_checked", JSON.stringify(rounds)); }
+    // 이름과 라운드 기록 모두 저장
+    function saveGame() { 
+        const currentNames = [0,1,2,3].map(i => document.getElementById(`name${i}`).value);
+        localStorage.setItem("gostop_vFinal_checked", JSON.stringify(rounds));
+        localStorage.setItem("gostop_names_saved", JSON.stringify(currentNames));
+    }
+
+    // 이름과 라운드 기록 모두 불러오기
     function loadGame() {
         const data = localStorage.getItem("gostop_vFinal_checked");
-        if(data) { rounds = JSON.parse(data); render(); }
+        const namesData = localStorage.getItem("gostop_names_saved");
+
+        if(namesData) {
+            const savedNames = JSON.parse(namesData);
+            savedNames.forEach((name, i) => {
+                if(name) {
+                    document.getElementById(`name${i}`).value = name;
+                    document.getElementById(`label${i}`).innerText = name;
+                }
+            });
+        }
+
+        if(data) { 
+            rounds = JSON.parse(data); 
+            render(); 
+        }
     }
+
     function undoLast() { if(confirm("마지막 판을 삭제할까요?")) { rounds.pop(); saveGame(); render(); } }
     function resetGame() { if(confirm("초기화하시겠습니까?")) { localStorage.clear(); location.reload(); } }
     function copyResult() {
@@ -339,12 +365,11 @@
         const hist = document.getElementById('history').innerText;
         navigator.clipboard.writeText("💰 고스톱 정산 최종 💰\n" + res + "\n\n📜 상세 기록\n" + hist).then(() => alert("복사 완료!"));
     }
-    // 팝업 바깥 영역 클릭 시 닫기
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
     }
-}
 </script>
 </body>
 </html>
